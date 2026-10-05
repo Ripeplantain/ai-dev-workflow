@@ -49,7 +49,8 @@ Starting points, not quotas. Remove anything that fails the necessity test; add 
 | Artifact | small | standard | large |
 |---|---|---|---|
 | `PROJECT.md` | yes | yes | yes |
-| `RULES.md` + `WORKFLOW.md` (single files) | usually | no | no |
+| `WORKFLOW.md` (single file) | yes | no | no |
+| `RULES.md` (single file) | usually | no | no |
 | `rules/` directory | no | yes | yes |
 | `workflows/` directory | no | yes | yes |
 | `agents/` | no | planner, implementer, tester, reviewer | add investigator |
@@ -59,7 +60,9 @@ Starting points, not quotas. Remove anything that fails the necessity test; add 
 | `skills/` | no | evidence-based | evidence-based |
 | `decisions/` | no | no | only to record a real decision |
 
-A small project whose README and contributor docs already cover its commands and conventions may need only `PROJECT.md`, or `PROJECT.md` plus `RULES.md`.
+Every install has a task workflow: `WORKFLOW.md` for a small project, the `workflows/` directory otherwise. `WORKFLOW.md` is not skipped because `RULES.md` or the README covers the verification step; it carries what they do not (task sizing, the step sequence, the bug-fix procedure) and links to them for the rest.
+
+A small project whose README and contributor docs already cover its conventions may need only `PROJECT.md` and `WORKFLOW.md`, without `RULES.md`.
 
 ### Conditions for individual artifacts
 

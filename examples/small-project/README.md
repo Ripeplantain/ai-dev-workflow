@@ -32,7 +32,7 @@ csvtidy/
 |---|---|---|
 | `PROJECT.md` | keep | Nothing tells an agent the module roles or the verification command |
 | `RULES.md` | keep | A few project-specific constraints worth stating once, including the branch and commit rules |
-| `WORKFLOW.md` | skip | The README's Development section already covers the loop; `RULES.md` carries the verification step |
+| `WORKFLOW.md` | keep | Every install has a task workflow; here it is task sizing, the step sequence, and how to add a rule, linking to the README for setup |
 | `agents/` | skip | One person, three modules; roles would be ceremony |
 | `rules/`, `workflows/` directories | skip | Small projects use single files |
 | Security, design-system, migration, specialist skills | skip | No evidence for most; the commit rules fit in five lines of `RULES.md` |
@@ -45,7 +45,8 @@ csvtidy/
 ├── AGENTS.md            new, 4 lines, points to .agent/PROJECT.md
 └── .agent/
     ├── PROJECT.md       31 lines
-    └── RULES.md         24 lines
+    ├── RULES.md         24 lines
+    └── WORKFLOW.md      27 lines
 ```
 
 Excerpt from the generated `PROJECT.md`:

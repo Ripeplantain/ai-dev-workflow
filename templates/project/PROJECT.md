@@ -81,6 +81,6 @@ These are authoritative. Read the relevant one before working in its area.
 |---|---|
 | `{{AGENT_FILE_PATH}}` | {{WHEN_TO_READ_IT}} |
 
-<!-- INSTALLER: One row per file actually generated in .agent/, so agents load only what a task needs. Delete this section if PROJECT.md is the only file. -->
+<!-- INSTALLER: One row per file actually generated in .agent/, so agents load only what a task needs. -->
 
 Workflow last verified against the repository on {{DATE}}.

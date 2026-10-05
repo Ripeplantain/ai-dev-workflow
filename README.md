@@ -87,7 +87,7 @@ Output depends on the repository. Typical shapes:
 
 | Repository | Typical `.agent/` contents |
 |---|---|
-| Small tool or library | `PROJECT.md`, perhaps `RULES.md` and `WORKFLOW.md` |
+| Small tool or library | `PROJECT.md`, `WORKFLOW.md`, usually `RULES.md` |
 | Standard production app | `PROJECT.md`, `agents/`, `rules/`, `workflows/`, selected `skills/` |
 | Large repo or monorepo | The above plus `context/` (architecture, workspaces, design system) |
 

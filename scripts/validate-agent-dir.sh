@@ -59,6 +59,8 @@ if [ ! -d "$agent" ]; then
 fi
 
 [ -f "$agent/PROJECT.md" ] || err ".agent/PROJECT.md is missing"
+[ -f "$agent/WORKFLOW.md" ] || [ -d "$agent/workflows" ] ||
+  err ".agent/ has no task workflow (WORKFLOW.md for a small project, workflows/ otherwise)"
 [ -d "$root/.ai" ] && warn ".ai/ exists alongside .agent/; migrate or remove the legacy directory"
 
 while IFS= read -r file; do

@@ -45,7 +45,7 @@ If nothing is open, or nobody can answer, continue and note it for the report.
 
 Load only the templates for artifacts marked keep.
 
-- Small project: `templates/project/PROJECT.md`, and `templates/project/RULES.md` and `templates/project/WORKFLOW.md` if kept.
+- Small project: `templates/project/PROJECT.md` and `templates/project/WORKFLOW.md`, and `templates/project/RULES.md` if kept.
 - Otherwise: `templates/project/PROJECT.md` plus the specific files chosen from `templates/agents/`, `templates/rules/`, `templates/workflows/`, `templates/context/`.
 - Specialist skills chosen: the matching `specialist-skills/<name>/SKILL.md`.
 

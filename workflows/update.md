@@ -44,6 +44,7 @@ Compare the current repository against `rules/project-installation.md`:
 
 - New topology or technology with no coverage (a UI was added, a database arrived, the repository became a workspace).
 - Artifacts that no longer pass the necessity test (an agent nobody needs, a rule file duplicated by new project docs). Removing is a valid update.
+- No task workflow: a small project without `WORKFLOW.md`, or a larger one without `workflows/`. Add it.
 - Structure that no longer fits the complexity (a small project that outgrew single-file `RULES.md` and `WORKFLOW.md`, or the reverse).
 
 Load templates and references only for the artifacts you are adding.

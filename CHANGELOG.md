@@ -10,6 +10,7 @@ All notable changes to this skill are recorded here. The format follows [Keep a 
 
 ### Changed
 
+- Small projects always get `.agent/WORKFLOW.md`; only `RULES.md` remains optional. The validator reports an error when `.agent/` has neither `WORKFLOW.md` nor `workflows/`, and update mode adds a missing one.
 - README install instructions cover any agent: a one-command install through the `skills` CLI, and a manual clone-once-and-link install with each agent's skills directory.
 
 ## [0.2.0] - 2026-10-05

@@ -80,7 +80,8 @@ Read only what the current step and this repository require. Never load the whol
 | `rules/project-installation.md` | Always, before deciding artifacts |
 | `references/repository-discovery.md` | Always, during discovery |
 | `templates/project/PROJECT.md` | Always, when writing project context |
-| `templates/project/RULES.md`, `templates/project/WORKFLOW.md` | Small projects only |
+| `templates/project/WORKFLOW.md` | Small projects, always |
+| `templates/project/RULES.md` | Small projects, when kept in step 5 |
 | `templates/agents/*`, `templates/rules/*`, `templates/workflows/*` | Only the specific files selected in step 5 |
 | `references/monorepos.md`, `templates/context/workspaces.md` | Workspace or multi-service evidence found |
 | `rules/design-system.md`, `references/design-tokens.md`, `templates/context/design-system.md`, `templates/rules/design-system.md` | UI code found |
