@@ -1,0 +1,10 @@
+version: "0.1"
+profile: minimal
+context:
+  instructionFiles:
+    - AGENTS.md
+  loadRelevantOnly: true
+workflows:
+  default: workflows/feature.md
+  directory: workflows
+  skillsDirectory: skills

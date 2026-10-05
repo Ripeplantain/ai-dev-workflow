@@ -1,0 +1,14 @@
+version: "0.1"
+profile: standard
+repository:
+  name: example-typescript-app
+context:
+  instructionFiles:
+    - AGENTS.md
+  loadRelevantOnly: true
+verification:
+  format: "<repository format command>"
+  lint: "<repository lint command>"
+  typecheck: "<repository typecheck command>"
+  test: "<repository test command>"
+  build: "<repository build command>"

@@ -1,0 +1,17 @@
+version: "0.1"
+profile: standard
+context:
+  instructionFiles:
+    - AGENTS.md
+  loadRelevantOnly: true
+workflows:
+  default: workflows/feature.md
+  directory: workflows
+  skillsDirectory: skills
+verification:
+  format: null
+  lint: null
+  typecheck: null
+  test: null
+  build: null
+  security: null

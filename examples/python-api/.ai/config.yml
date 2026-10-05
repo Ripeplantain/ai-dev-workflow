@@ -1,0 +1,14 @@
+version: "0.1"
+profile: standard
+repository:
+  name: example-python-api
+context:
+  instructionFiles:
+    - AGENTS.md
+  loadRelevantOnly: true
+verification:
+  format: "<repository formatter command>"
+  lint: "<repository lint command>"
+  typecheck: "<repository type-check command>"
+  test: "<repository test command>"
+  security: "<repository security command>"
