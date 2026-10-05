@@ -44,14 +44,14 @@ This API uses Jest and Vitest:
 
 ## File Generation Sequence
 
-### Step 4.1: Generate `.ai/SKILL.md`
+### Step 4.1: Generate `.agent/PROJECT.md`
 
 **Input:**
 - discoveries.md output
 - analysis report
 - questions answered
 
-**Template:** `templates/skill.template.md`
+**Template:** `templates/project.template.md`
 
 **Customizations:**
 - Replace `[PROJECT_NAME]`, `[PROJECT_TYPE]`, `[PRIMARY_LANGUAGE]`
@@ -59,36 +59,32 @@ This API uses Jest and Vitest:
 - Populate examples with actual repository commands
 - Reference discovered tools (Jest, Vitest, eslint, prettier, etc.)
 - Include special concerns (auth, payments, real-time)
-- Reference `.ai/agents.md` for agent roles
+- Reference `.agent/` structure
 
-**Output:** `.ai/SKILL.md` (2-4 KB, executable guide)
+**Output:** `.agent/PROJECT.md` (2-4 KB, project context guide)
 
 Example sections:
 
 ```markdown
-# [Project Name] AI Workflow
+# [Project Name] — Agent Context
 
-Version 0.1 — customized for [PROJECT_TYPE] on [DATE]
+Updated: [DATE]
 
 > AI should adapt to the repository. The repository should not adapt to the AI.
 
-## The Lifecycle
+## Project Overview
+
+[Project type, stack, and key characteristics]
+
+## Workflows
 
 [Conditionally include workflows relevant to this project]
 
-- **Feature development**: `.ai/workflows/feature.md`
-- **Bug fixes**: `.ai/workflows/bugfix.md`
+- **Feature development**: `.agent/workflows/feature.md`
+- **Bug fixes**: `.agent/workflows/bugfix.md`
 [Skip migration.md if single project, skip ui-feature.md if not UI]
 
-## Always Load
-
-- `rules/engineering.md` — TypeScript/[LANGUAGE] conventions
-- `rules/[FRAMEWORK].md` — [FRAMEWORK] patterns
-- `rules/testing.md` — Jest + Vitest + coverage approach
-
-[If payments] Include: `rules/security.md` — payment handling
-
-## Quick Reference
+## Commands
 
 **Testing:** `npm test` (Jest) or `npm run test:watch` (Vitest)
 **Linting:** `npm run lint` (eslint + prettier)
@@ -96,7 +92,7 @@ Version 0.1 — customized for [PROJECT_TYPE] on [DATE]
 [Language-specific commands based on discoveries]
 ```
 
-### Step 4.2: Generate `.ai/AGENTS.md`
+### Step 4.2: Generate `.agent/AGENTS.md`
 
 **Input:**
 - discoveries (team size, maturity)
@@ -111,7 +107,7 @@ Version 0.1 — customized for [PROJECT_TYPE] on [DATE]
 - Reference responsibilities that fit this project type
 - Include team-specific decisions (who approves what)
 
-**Output:** `.ai/AGENTS.md` (1-2 KB)
+**Output:** `.agent/AGENTS.md` (1-2 KB)
 
 Example:
 
@@ -707,7 +703,7 @@ Run in order:
    - No unreplaced placeholders
    - All file references are relative and correct
    - Markdown syntax is valid
-5. **Create** `.ai/questions-answered.md` summary
+5. **Create** `.agent/decisions.md` summary
 6. **Create** commit message with assumptions listed
 7. **Ask** for final approval before committing
 
@@ -717,13 +713,13 @@ Run in order:
 
 Before committing, verify:
 
-- [ ] All `.ai/` and `rules/` and `references/` files created
+- [ ] All `.agent/` and `rules/` and `references/` files created
 - [ ] No `[PLACEHOLDER]` remains unreplaced
 - [ ] All internal links (`rules/testing.md`) resolve
 - [ ] File references match actual scripts in `package.json`
 - [ ] Language-specific sections (TypeScript, Go, Python) match detected languages
 - [ ] Questions answered are reflected in generated files
-- [ ] `.ai/questions-answered.md` documents all decisions
+- [ ] `.agent/decisions.md` documents all decisions
 - [ ] Commit message lists discovered facts and assumptions
 
 ---
@@ -741,19 +737,20 @@ Discovered:
 - Deployed to Vercel
 
 Generated:
-- .ai/SKILL.md — project-specific workflow
-- .ai/AGENTS.md — roles for planner, investigator, reviewer
+- .agent/PROJECT.md — project context and workflows
+- .agent/AGENTS.md — roles for planner, investigator, reviewer
+- .agent/context/ — architecture and design decisions
 - rules/ — customized to TypeScript + React + testing approach
 - references/ — discovery data and task complexity levels
 
-Assumptions (changeable via .ai/questions-answered.md):
+Assumptions (changeable via .agent/decisions.md):
 - Jest is primary test framework (Vitest for integration)
 - All changes L2+ require code review
 - Monorepo boundaries are hard constraints
 - Conventional Commits format for all messages
-- Code review by tech lead (see .ai/AGENTS.md)
+- Code review by tech lead (see .agent/AGENTS.md)
 
-To modify: Update .ai/questions-answered.md and re-run with --force
+To modify: Update .agent/decisions.md and re-run with --force
 
 Co-Authored-By: custom-ai-workflow skill <noreply@anthropic.com>
 ```

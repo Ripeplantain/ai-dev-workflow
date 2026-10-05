@@ -10,8 +10,9 @@ The custom-ai-workflow skill is a **meta-tool** that helps you adopt the Univers
 2. **Analyzes** the project context (type, maturity, tech stack, team)
 3. **Asks questions** when uncertain (with candidate options)
 4. **Generates** a complete, customized AI workflow:
-   - `.ai/SKILL.md` — root orchestrator with your repo's conventions
-   - `.ai/AGENTS.md` — roles suited to your project type
+   - `.agent/PROJECT.md` — project context and workflows
+   - `.agent/AGENTS.md` — roles suited to your project type
+   - `.agent/context/` — architecture and design decisions
    - `rules/` — engineering standards tailored to your stack
    - `references/` — discovery outputs and task complexity levels
 5. **Commits** the generated files with documented assumptions
@@ -27,7 +28,7 @@ Use this skill when:
 
 Do **not** use if:
 
-- Your repository already has `.ai/SKILL.md` (it's already adopted)
+- Your repository already has `.agent/PROJECT.md` (it's already adopted)
 - You just need general guidance (use the Universal AI Engineering Skill directly instead)
 
 ## Installation
@@ -94,18 +95,18 @@ The skill will:
 
 ## What Gets Generated
 
-### `.ai/SKILL.md`
+### `.agent/PROJECT.md`
 
-The root orchestrator — tells agents:
-- What commands to run
-- Which workflows apply to your project
-- When to load each rule file
+Project context guide — tells agents:
+- Project overview and structure
+- Workflows available for your project
+- Commands to run
 - Special concerns (auth, payments, PII)
 - Quick reference for team conventions
 
 **Customized for**: Your repo's languages, frameworks, tools, deployment platform
 
-### `.ai/AGENTS.md`
+### `.agent/AGENTS.md`
 
 Describes optional subagent roles:
 - **Planner**: For L2+ features, cross-boundary changes
@@ -145,7 +146,7 @@ Reference materials generated from discoveries:
 - `task-complexity.md` — L0-L4 examples tailored to your project
 - `definition-of-done.md` — checklist customized to your team
 
-### `.ai/questions-answered.md`
+### `.agent/decisions.md`
 
 Records all decisions made during adoption:
 
@@ -172,7 +173,7 @@ skills/custom-ai-workflow/
 ├── question.md              ← Step 3: Clarifying questions with options
 ├── generate.md              ← Step 4: File generation logic
 ├── templates/               ← Parametrized templates
-│   ├── skill.template.md
+│   ├── project.template.md
 │   ├── agents.template.md
 │   ├── rules/
 │   │   ├── engineering.template.md
@@ -227,7 +228,8 @@ B) CSS variables
 ```
 
 **Generated**:
-- `.ai/SKILL.md` customized for Next.js + React
+- `.agent/PROJECT.md` customized for Next.js + React
+- `.agent/context/` with architecture decisions
 - `rules/engineering.md` with TypeScript conventions
 - `rules/testing.md` with Jest + Vitest ceremony levels
 - `rules/design-system.md` with Tailwind + theming
@@ -243,7 +245,8 @@ Discovered:
 - Tailwind CSS
 
 Generated:
-- .ai/SKILL.md, .ai/AGENTS.md
+- .agent/PROJECT.md, .agent/AGENTS.md
+- .agent/context/ with architecture
 - rules/ with TypeScript conventions
 - references/ with task complexity examples
 
@@ -299,13 +302,13 @@ DISCOVER → ANALYZE → ASK → GENERATE → COMMIT
 3. **ASK** (`question.md`)
    - For each ambiguity, ask with 2-4 candidate options
    - Examples: "Which test framework is primary?"
-   - Record answers in `.ai/questions-answered.md`
+   - Record answers in `.agent/decisions.md`
 
 4. **GENERATE** (`generate.md`)
    - Load parametrized templates
    - Replace `[PLACEHOLDERS]` with discovered values
    - Include/exclude sections based on project type
-   - Create `.ai/SKILL.md`, `rules/`, `references/`
+   - Create `.agent/PROJECT.md`, `rules/`, `references/`
 
 5. **COMMIT**
    - List discovered facts
@@ -334,13 +337,13 @@ The skill uses evidence-based discovery. If it's wrong:
 
 ### "I want to change a decision"
 
-Edit `.ai/questions-answered.md` and regenerate with `--force`.
+Edit `.agent/decisions.md` and regenerate with `--force`.
 
 ### "Can I customize the generated files?"
 
 Yes! After generation:
 1. Edit the files directly
-2. Update `.ai/questions-answered.md` if decisions changed
+2. Update `.agent/decisions.md` if decisions changed
 3. Commit
 
 The generated files are yours to modify. They're not locked in.
@@ -358,7 +361,7 @@ The skill generates rules for:
 
 If something's missing:
 1. Create the rule file manually
-2. Reference it in `.ai/SKILL.md`
+2. Reference it in `.agent/PROJECT.md`
 3. Re-run with `--force` won't overwrite (if using `--preserve-custom`)
 
 ### "How do I share this with my team?"
@@ -366,14 +369,14 @@ If something's missing:
 Commit the generated files to your repo:
 
 ```bash
-git add .ai/
+git add .agent/ rules/ references/
 git commit -m "adopt: initialize AI workflow"
 git push
 ```
 
 Your team can now:
 1. Pull the changes
-2. Read `.ai/SKILL.md` to understand the workflow
+2. Read `.agent/PROJECT.md` to understand the workflow
 3. Ask Claude Code agents to use the skill
 
 ## Contributing

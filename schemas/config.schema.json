@@ -45,13 +45,12 @@
         "security": { "type": ["string", "null"] }
       }
     },
-    "workflows": {
+    "agent": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "default": { "type": "string" },
-        "directory": { "type": "string" },
-        "skillsDirectory": { "type": "string" }
+        "directory": { "type": "string", "default": ".agent" },
+        "instructionFile": { "type": "string", "default": "AGENTS.md" }
       }
     }
   }

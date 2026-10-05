@@ -20,7 +20,7 @@ A complete, production-ready skill that automatically sets up the Universal AI E
 ### Templates (Parametrized, Reusable)
 
 #### Template Directory
-- **`templates/skill.template.md`** — Root SKILL.md template with [PLACEHOLDERS]
+- **`templates/project.template.md`** — PROJECT.md template with [PLACEHOLDERS]
 - **`templates/agents.template.md`** — AGENTS.md template with conditional sections
 
 #### Rule Templates
@@ -94,7 +94,7 @@ Templates include conditional sections:
 Never assumes when uncertain:
 1. Detects ambiguity (multiple test frameworks, conflicting patterns)
 2. Asks user to choose (with 2-4 options)
-3. Records decision in `.ai/questions-answered.md`
+3. Records decision in `.agent/decisions.md`
 4. Generates files based on decisions
 
 ### ✅ Reusable, Parametrized
@@ -130,7 +130,7 @@ cp -r skills/custom-ai-workflow ~/.claude/skills/custom-ai-workflow
 1. Discovers repo (discovers.md)
 2. Analyzes context (analyze.md)
 3. Asks clarifying questions (question.md)
-4. Generates `.ai/SKILL.md`, `.ai/AGENTS.md`, `rules/`, `references/`
+4. Generates `.agent/PROJECT.md`, `.agent/AGENTS.md`, `rules/`, `references/`
 5. Commits with documented assumptions
 
 ---
@@ -148,7 +148,7 @@ skills/custom-ai-workflow/
 ├── COMPLETENESS.md                        ← This file
 │
 ├── templates/                             ← Parametrized templates
-│   ├── skill.template.md
+│   ├── project.template.md
 │   ├── agents.template.md
 │   └── rules/
 │       └── engineering.template.md
@@ -168,14 +168,14 @@ skills/custom-ai-workflow/
 
 When run on a repository, the skill generates:
 
-### `.ai/SKILL.md`
-- Root orchestrator customized to the project
+### `.agent/PROJECT.md`
+- Project context customized to the project
 - Quick commands (actual commands discovered)
 - Workflows to load (feature, bugfix, etc.)
 - Rules to always load
 - Task complexity levels with examples
 
-### `.ai/AGENTS.md`
+### `.agent/AGENTS.md`
 - Planner role (for L2+ tasks)
 - Investigator role (for bugs)
 - Reviewer role (for code review)
@@ -231,7 +231,7 @@ When run on a repository, the skill generates:
 - Ceremony for each level
 - What each level requires
 
-### `.ai/questions-answered.md`
+### `.agent/decisions.md`
 - Records all decisions made
 - Allows easy re-run with `--force`
 - Editable if conventions change
@@ -278,7 +278,7 @@ To test:
 2. Verify discoveries match actual stack
 3. Answer questions
 4. Check generated files make sense
-5. Commit and verify agents can use `.ai/SKILL.md`
+5. Commit and verify agents can use `.agent/PROJECT.md`
 
 ---
 
@@ -290,7 +290,7 @@ To use this skill:
 2. **Run** in any repository: `/custom-ai-workflow`
 3. **Answer** questions
 4. **Commit** generated files
-5. **Share** `.ai/SKILL.md` with team
+5. **Share** `.agent/PROJECT.md` with team
 
 To extend:
 
