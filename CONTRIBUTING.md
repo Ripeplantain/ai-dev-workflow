@@ -1,25 +1,37 @@
 # Contributing
 
-Thanks for helping improve the AI Engineering Workflow Standard.
+Thanks for helping improve the custom-ai-workflow skill!
 
-## Guiding rules
+## Areas to Improve
 
-- Keep the canonical standard tool-agnostic and language-independent.
-- Prefer clear, actionable instructions over generic advice.
-- Reuse core documents; do not copy the full standard into every workflow or adapter.
-- Preserve existing repository architecture in examples and templates.
-- Add ceremony only when it reduces meaningful risk.
-- Do not claim support for a tool configuration format unless it is documented by that tool.
+- **Better discovery** — Detect new languages, frameworks, or tools
+- **More questions** — Identify common ambiguities we're missing
+- **Better templates** — Improve generated rule files or agents
+- **More scenarios** — Add walkthroughs for different project types
+- **Documentation** — Clarify existing guides or examples
 
-## Making a change
+## Guiding Principles
 
-1. Read the relevant document and any linked core principle.
-2. Make a focused change.
-3. Check internal links, examples, and schema validity when relevant.
-4. Review the diff for accidental files, duplication, and unsupported claims.
-5. Explain user-visible behavior and limitations in the pull request.
+- Keep the skill **language-agnostic** — discoveries should work for any tech stack
+- **Detect from evidence** — look for actual files/configs, don't assume
+- **Ask when uncertain** — never guess; offer options instead
+- **Document assumptions** — record what we inferred and why
+- **Reuse patterns** — use same templates for all languages/frameworks
 
-## Content quality bar
+## Making a Change
 
-Every new workflow, skill, or adapter should state its purpose, scope, inputs, outputs, constraints, and verification expectations. A new file should earn its place: extend an existing document when that is clearer.
+1. Read the relevant skill file (`discover.md`, `question.md`, `generate.md`)
+2. Make a focused improvement
+3. Test with a real repository (if adding discovery or questions)
+4. Check internal links and references
+5. Explain what you improved in the PR
 
+## What's a Good Contribution
+
+- Adds detection for a new tool/framework
+- Identifies a common ambiguity (adds to `question.md`)
+- Improves template accuracy (fixes incorrect assumptions)
+- Adds a new scenario for a different tech stack
+- Fixes a bug in discovery, analysis, or generation logic
+
+See [`skills/custom-ai-workflow/README.md`](skills/custom-ai-workflow/README.md) for detailed skill documentation.

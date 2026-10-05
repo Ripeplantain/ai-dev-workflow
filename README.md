@@ -1,121 +1,146 @@
-# AI Engineering Workflow Standard
+# custom-ai-workflow Skill
 
-**Version 0.1 · specification-first · tool-agnostic**
+A Claude Code skill that automatically adopts the Universal AI Engineering Skill into any repository.
 
-> AI should adapt to the repository. The repository should not adapt to the AI.
+## What It Does
 
-AI coding tools are useful, but they often lose architectural context, invent duplicate abstractions, skip verification, modify unrelated files, or behave differently across models and products. This repository defines a small, portable engineering standard for using AI safely in real software repositories.
+The skill:
 
-The canonical lifecycle is:
+1. **Discovers** your repository's actual conventions, tooling, and patterns
+2. **Analyzes** your project (type, maturity, tech stack, team)
+3. **Asks questions** when uncertain (with options to choose from)
+4. **Generates** a complete AI workflow setup:
+   - `.ai/SKILL.md` — customized root orchestrator
+   - `.ai/AGENTS.md` — roles suited to your project
+   - `rules/` — engineering standards tailored to your stack
+   - `references/` — discovery outputs and task complexity levels
+5. **Commits** everything with documented assumptions
 
-**Read → Understand → Classify → Plan → Implement → Verify → Review → Clean → Report**
+## Installation
 
-The lifecycle is adaptive. A typo does not need the ceremony of an authorization redesign.
-
-## What this is
-
-- A repository-aware engineering workflow for AI-assisted changes.
-- A set of reusable principles, task workflows, skills, agent contracts, templates, and examples.
-- A portable source of truth that tool adapters can reference.
-
-## What this is not
-
-- A giant system prompt.
-- A programming framework or package manager.
-- A forced software architecture.
-- Tied to one model, language, framework, or AI coding product.
-
-## Quick start
-
-Choose the smallest profile that fits the repository and copy it into the target repository:
-
-```text
-templates/minimal/   # prototypes and tiny repositories
-templates/standard/  # recommended default for production applications
-templates/monorepo/  # multiple apps, packages, or services
+```bash
+cp -r skills/custom-ai-workflow ~/.claude/skills/custom-ai-workflow
 ```
 
-At minimum, copy `AGENTS.md` and `.ai/config.yml`. Then customize the repository-specific sections. Keep the core standard upstream-managed when adopting it wholesale; keep local rules and decisions project-owned.
+## Usage
 
-For each meaningful task, the agent should:
+In any repository:
 
-1. Read the applicable global, repository, workspace, and module instructions.
-2. Discover the repository before proposing a solution.
-3. Classify the task from L0 to L4.
-4. Load the matching workflow and relevant skills.
-5. Make the smallest correct change that preserves existing architecture.
-6. Run proportional verification and review the diff as an independent reviewer.
-7. Report what changed, what was verified, and any limitations.
-
-## Profiles
-
-| Profile | Use when | Includes |
-| --- | --- | --- |
-| `minimal` | Tiny repositories, prototypes, personal projects | A short instruction file and lightweight config |
-| `standard` | Normal production applications | Full lifecycle, context hierarchy, verification, and reporting guidance |
-| `monorepo` | Multiple apps, packages, or services | Standard guidance plus workspace boundaries, ownership, and affected-project checks |
-
-`standard` is the recommended default. Profiles are starting points, not architecture mandates.
-
-## Repository map
-
-```text
-core/       shared engineering principles and safeguards
-workflows/  task-specific lifecycle adaptations
-agents/     optional planner/implementer/reviewer contracts
-skills/     focused instructions loaded only when relevant
-templates/  minimal, standard, and monorepo starter profiles
-adapters/   thin guidance for individual AI tools
-decisions/  lightweight architectural decision records
-schemas/    optional validation for convention-based configuration
-examples/   small adoption examples
+```bash
+/custom-ai-workflow
 ```
 
-The core documents are the source of truth. Workflows, skills, agents, adapters, and templates should reference the core rather than creating competing engineering philosophies.
+The skill will discover, analyze, ask questions, and generate files. Answer a few questions and it's done.
 
-Task-level guidance lives in [`core/task-classification.md`](core/task-classification.md); reporting expectations live in [`core/reporting.md`](core/reporting.md).
+## Examples
 
-## Task levels
+See the scenarios for walkthroughs:
 
-| Level | Typical change | Minimum shape |
-| --- | --- | --- |
-| L0 | Typo, formatting, obvious one-line documentation fix | Understand → Implement → Verify |
-| L1 | Localized bug, small UI or validation change | Discover → Understand → Implement → Verify → Report |
-| L2 | Normal feature, endpoint, component, or moderate bug | Discover → Understand → Plan → Implement → Verify → Review → Report |
-| L3 | Cross-module feature, migration, auth, infrastructure, shared package | Deep plan, dependency analysis, broader tests, explicit review |
-| L4 | Architecture, security-critical, payments, authorization redesign, breaking API | Decision record, staged implementation, comprehensive verification, explicit risks |
+- **TypeScript Web App** — Next.js + React + Jest + Tailwind
+  - [`scenarios/typescript-web-app.scenario.md`](skills/custom-ai-workflow/scenarios/typescript-web-app.scenario.md)
 
-When uncertain, start one level higher, explain why, and reduce ceremony only after discovery shows it is safe.
+- **Go Microservice** — Gin + PostgreSQL + sqlc
+  - [`scenarios/go-microservice.scenario.md`](skills/custom-ai-workflow/scenarios/go-microservice.scenario.md)
 
-## Tool compatibility
+- **Python API** — FastAPI + SQLAlchemy + pytest
+  - [`scenarios/python-api.scenario.md`](skills/custom-ai-workflow/scenarios/python-api.scenario.md)
 
-Adapters are deliberately thin. They explain how to make a tool load the canonical standard and repository-specific instructions; they do not pretend that every tool supports the same configuration format. See `adapters/` for Codex, Claude Code, Cursor, GitHub Copilot, Gemini, and OpenCode guidance.
+## Documentation
 
-## Future direction
+See the skill folder for complete documentation:
 
-The repository is structured for future integrations without requiring them in v0.1:
+- **`SKILL.md`** — Skill overview
+- **`README.md`** — Installation and usage
+- **`discover.md`** — Discovery protocol (what it detects)
+- **`analyze.md`** — Analysis framework (how it classifies)
+- **`question.md`** — Question library (what it asks)
+- **`generate.md`** — Generation logic (how it creates files)
+- **`scenarios/`** — Example walkthroughs for different stacks
 
-- `npx ai-dev-workflow init` could install a selected profile.
-- `npx ai-dev-workflow update` could update upstream-managed files without overwriting project-owned rules.
-- The same core could become a Codex skill, Claude Code integration, Cursor ruleset, OpenCode integration, or other plugin.
+## Folder Structure
 
-Future installers should clearly distinguish **upstream-managed files** from **project-owned files**. An installer must preserve local rules, decisions, and configuration extensions.
+```
+skills/custom-ai-workflow/          The complete skill
+├── SKILL.md
+├── README.md
+├── discover.md
+├── analyze.md
+├── question.md
+├── generate.md
+├── templates/                      Parametrized templates
+│   ├── skill.template.md
+│   ├── agents.template.md
+│   └── rules/
+├── scenarios/                      Example walkthroughs
+│   ├── typescript-web-app.scenario.md
+│   ├── go-microservice.scenario.md
+│   └── python-api.scenario.md
+└── COMPLETENESS.md                 Implementation status
+```
 
-## Roadmap
+## Key Features
 
-- v0.1 — specification and starter templates
-- v0.2 — improved tool adapters
-- v0.3 — reusable skills
-- v0.4 — project initialization CLI
-- v0.5 — automatic repository detection
-- v1.0 — stable workflow specification
+✅ **Language-agnostic** — Works with TypeScript, Go, Python, Rust, Java, Ruby, etc.  
+✅ **Discovery-driven** — Detects from evidence, never assumes  
+✅ **Question-based** — Asks ~20 clarifying questions with options  
+✅ **Conditional** — Generates only what's relevant to your project  
+✅ **Portable** — Copy the skill folder anywhere  
+✅ **Documented** — 5,000+ lines of guides and examples  
 
-These are direction-setting milestones, not release promises.
+## What Gets Generated
+
+When you run the skill, it generates:
+
+- **`.ai/SKILL.md`** — Your repo's customized workflow guide
+- **`.ai/AGENTS.md`** — Agent roles (planner, investigator, reviewer)
+- **`rules/engineering.md`** — Language-specific conventions
+- **`rules/testing.md`** — Testing framework and ceremony levels
+- **`rules/architecture.md`** — Project structure patterns
+- **`rules/git.md`** — Git workflow conventions
+- **`rules/security.md`** — Auth, payments, PII handling (if applicable)
+- **`rules/design-system.md`** — Design tokens and theming (if UI project)
+- **`references/task-complexity.md`** — L0-L4 examples for your project
+- **`.ai/questions-answered.md`** — Record of decisions made
+
+All customized to your specific project's stack, maturity, and team.
+
+## Quick Start
+
+```bash
+# 1. Copy the skill to Claude Code
+cp -r skills/custom-ai-workflow ~/.claude/skills/custom-ai-workflow
+
+# 2. Go to your repository
+cd /path/to/your-repo
+
+# 3. Run the skill
+/custom-ai-workflow
+
+# 4. Answer a few questions
+# (or just press Enter to accept defaults)
+
+# 5. Review what will be committed
+# (the skill shows you the changes first)
+
+# 6. Done!
+# Your repo now has .ai/SKILL.md with all conventions documented
+```
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md). Changes should improve portability, reduce ambiguity, or make the workflow easier to apply without adding ceremony for its own sake.
+Improvements welcome:
+
+- Better discovery for new tools/frameworks
+- More questions for common ambiguities
+- Better templates or scenarios
+- Support for additional languages
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [`LICENSE`](LICENSE).
+
+---
+
+**Ready to use?** Install the skill and run it on any repository to automatically set up AI agent support.
