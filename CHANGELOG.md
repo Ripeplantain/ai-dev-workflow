@@ -4,6 +4,10 @@ All notable changes to this skill are recorded here. The format follows [Keep a 
 
 ## [Unreleased]
 
+### Changed
+
+- README install instructions cover any agent: a one-command install through the `skills` CLI, and a manual clone-once-and-link install with each agent's skills directory.
+
 ## [0.2.0] - 2026-10-05
 
 Complete rewrite as a root-level installable skill.

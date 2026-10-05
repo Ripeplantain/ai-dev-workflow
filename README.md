@@ -20,15 +20,46 @@ Inspect target repo → Understand architecture → Determine what it needs → 
 
 The skill is a directory with a `SKILL.md` at its root. Install it wherever your agent loads skills from.
 
-Claude Code, for all your projects:
+### Any agent, one command
+
+The [`skills`](https://github.com/vercel-labs/skills) CLI detects the agents on your machine and installs the skill for the ones you pick. It needs Node.js.
 
 ```bash
-git clone https://github.com/Ripeplantain/ai-dev-workflow.git ~/.claude/skills/ai-engineering-workflow
+npx skills add Ripeplantain/ai-dev-workflow -g
 ```
 
-Claude Code, for one project: clone into `.claude/skills/ai-engineering-workflow` inside that project.
+`-g` installs for all your projects; leave it off to install into the current project only. To skip the prompts, name the agents:
 
-Other agents: clone the repository anywhere and tell the agent to read `SKILL.md` from that location.
+```bash
+npx skills add Ripeplantain/ai-dev-workflow -g -y -a claude-code -a codex -a cursor
+```
+
+### Manual install
+
+Clone the skill once, then link it into the skills directory of each agent you use:
+
+```bash
+git clone https://github.com/Ripeplantain/ai-dev-workflow.git ~/.agents/skills/ai-engineering-workflow
+ln -s ~/.agents/skills/ai-engineering-workflow ~/.claude/skills/ai-engineering-workflow
+```
+
+Repeat the `ln -s` line for each agent, creating the directory first if it does not exist:
+
+| Agent | Skills directory |
+|---|---|
+| Claude Code | `~/.claude/skills/` |
+| Codex | `~/.codex/skills/` |
+| Cursor | `~/.cursor/skills/` |
+| Gemini CLI | `~/.gemini/skills/` |
+| GitHub Copilot | `~/.copilot/skills/` |
+| OpenCode | `~/.config/opencode/skills/` |
+| Windsurf | `~/.codeium/windsurf/skills/` |
+
+To update every agent at once, run `git -C ~/.agents/skills/ai-engineering-workflow pull`.
+
+For one project only, clone into that project's `.claude/skills/ai-engineering-workflow` (Claude Code) or `.agents/skills/ai-engineering-workflow` (most other agents).
+
+An agent with no skills directory: clone the repository anywhere and tell the agent to read `SKILL.md` from that location.
 
 ## Use
 
@@ -93,10 +124,10 @@ Task effort scales with a five-level complexity scale, L0 (trivial) to L4 (criti
 ## Validating a generated workflow
 
 ```bash
-~/.claude/skills/ai-engineering-workflow/scripts/validate-agent-dir.sh /path/to/project
+~/.agents/skills/ai-engineering-workflow/scripts/validate-agent-dir.sh /path/to/project
 ```
 
-The installer runs this itself. It requires only Bash and standard Unix tools.
+Adjust the path to wherever you installed the skill. The installer runs this itself. It requires only Bash and standard Unix tools.
 
 ## Contributing
 
