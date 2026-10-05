@@ -17,6 +17,8 @@ Paths in this file are relative to the skill's own directory. `.agent/` always m
 
 When asked to install, initialize, configure, set up, or update a project's AI workflow, you **do the work**: inspect the repository, write the files, verify them, and report. Stopping at "I recommend creating a `.agent/` directory" is a failure. Recommend-only output is correct only when the user explicitly asks for a plan, a preview, or a dry run.
 
+Doing the work includes asking. A short batch of questions before writing (see [Questions](#questions)) is part of the procedure, not a way of stopping short of it.
+
 ## Choose the mode
 
 | Situation | Mode | Load |
@@ -37,12 +39,36 @@ Install and Update both follow this sequence. The workflow file for the mode giv
 3. **Discover** architecture and tooling from evidence, following `references/repository-discovery.md`. Do not guess; an unconfirmed fact is recorded as unknown or left out.
 4. **Classify** the repository by complexity (small, standard, large) and topology (it may have several).
 5. **Decide the artifacts** using `rules/project-installation.md`. Each file must pass the necessity test before it is written.
-6. **Load only the templates and references** the decision calls for (see the table below).
-7. **Customize**: replace every placeholder with repository evidence, delete sections with nothing to say, and use the project's real commands, paths, and names.
-8. **Write or update `.agent/`**, and make sure the project's agent entry file points to it.
-9. **Validate**: run `scripts/validate-agent-dir.sh <target-repo-root>` and execute the verification commands you documented, where it is safe to do so.
-10. **Review the diff** (`git status`, `git diff`) and remove anything that is generic, duplicated, or unsupported by evidence.
-11. **Report** what was created, changed, skipped, and assumed.
+6. **Ask** the user, in one batch and before writing anything, what the repository could not settle (see [Questions](#questions)).
+7. **Load only the templates and references** the decision calls for (see the table below).
+8. **Customize**: replace every placeholder with repository evidence and the user's answers, delete sections with nothing to say, and use the project's real commands, paths, and names.
+9. **Write or update `.agent/`**, and make sure the project's agent entry file points to it.
+10. **Validate**: run `scripts/validate-agent-dir.sh <target-repo-root>` and execute the verification commands you documented, where it is safe to do so.
+11. **Review the diff** (`git status`, `git diff`) and remove anything that is generic, duplicated, or unsupported by evidence.
+12. **Report** what was created, changed, skipped, asked, and assumed.
+
+## Questions
+
+Discovery answers most things, and anything the repository answers is never asked. What is left goes to the user in step 6, because a wrong guess written into `.agent/` is repeated on every later task.
+
+Ask when the answer changes what gets written and the repository cannot give it:
+
+| Kind | Examples |
+|---|---|
+| Conflicting evidence | Two lockfiles from different package managers; a README command that CI or the manifest contradicts |
+| A convention the repository does not establish | Branch and commit rules when the history shows no clear pattern, or when a template rule would be stricter than current practice |
+| A fact nothing records | Deployment target, required environments, a command with no script (type check, single test) |
+| Intent | Things agents must always or never do here that no file states; whether a borderline artifact is wanted |
+
+How to ask:
+
+- Finish discovery first, then ask once. Do not interleave questions with exploration, and do not ask again later for something you could have asked here.
+- Keep it to the questions that matter, usually one to four. No fixed list: every question comes from something this repository left open.
+- For each question, say what you found and offer concrete options with your recommended one first, so the user can answer in a word.
+- Use the agent's structured question tool if it has one; otherwise ask in a plain message and wait.
+- An answer is evidence. Write it into `.agent/` as fact and name it in the report.
+
+Do not ask when the user said not to, or when nobody can answer (a non-interactive or scripted run). Then take the best-supported option, and list each such choice in the report as an assumption with the alternative. If discovery left nothing open, skip the step and say so in the report.
 
 ## Progressive context loading
 
@@ -97,6 +123,7 @@ End every install or update with a short report:
 - Files created, files changed, and existing files deliberately left alone
 - Artifacts considered and skipped, with one reason each
 - Verification commands recorded, and which ones you ran with their result
+- Questions asked and the answers used, or that nothing needed asking
 - Assumptions and anything the repository could not confirm
 - Validator result
 

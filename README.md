@@ -77,7 +77,7 @@ Use the ai-engineering-workflow skill to update this project's .agent/ directory
 Use the ai-engineering-workflow skill and show me what you would generate, without writing anything.
 ```
 
-The agent inspects the repository, classifies it, decides which artifacts are justified, writes them, validates the result, reviews the diff, and reports what it did and what it skipped. It leaves the generated workflow uncommitted for you to review.
+The agent inspects the repository, classifies it, decides which artifacts are justified, asks you about anything the repository leaves open (conflicting evidence, conventions it cannot see), writes the files, validates the result, reviews the diff, and reports what it did and what it skipped. It leaves the generated workflow uncommitted for you to review.
 
 Once installed, the workflow tells agents how to handle Git on real tasks: a `<type>/<short-slug>` branch per task, one commit per finished unit, files staged by path, no attribution trailers, and no push or merge unless asked. A project's own branch and message conventions take precedence where they exist.
 

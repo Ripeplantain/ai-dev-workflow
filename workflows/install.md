@@ -33,7 +33,15 @@ Start from the selection table in `rules/project-installation.md` for the classi
 
 Stop here and present the list instead of writing files only if the user asked for a preview or dry run.
 
-## 6. Load templates
+## 6. Ask
+
+Follow the Questions section of `SKILL.md`. Go through the unknowns and conflicts from discovery and the keep-or-skip list from step 5, and pick out the ones where the answer changes a command, a rule, or whether a file exists. Ask them together, each with the evidence you found and a recommended option, then wait for the answers before loading templates.
+
+Typical install questions: which package manager is canonical when lockfiles disagree, whether to record the Git practice the history shows or a stricter one, where the project deploys when nothing configures it, and whether there are rules for agents that no file states.
+
+If nothing is open, or nobody can answer, continue and note it for the report.
+
+## 7. Load templates
 
 Load only the templates for artifacts marked keep.
 
@@ -41,11 +49,11 @@ Load only the templates for artifacts marked keep.
 - Otherwise: `templates/project/PROJECT.md` plus the specific files chosen from `templates/agents/`, `templates/rules/`, `templates/workflows/`, `templates/context/`.
 - Specialist skills chosen: the matching `specialist-skills/<name>/SKILL.md`.
 
-## 7. Customize
+## 8. Customize
 
 For each file:
 
-- Replace every `{{PLACEHOLDER}}` with a fact from the repository.
+- Replace every `{{PLACEHOLDER}}` with a fact from the repository or an answer from step 6.
 - Follow each `INSTALLER:` note, then delete it.
 - Delete any section the repository gives nothing to say about. An empty or generic section is worse than a missing one.
 - Use real commands, real paths, and the project's own vocabulary for its layers and modules.
@@ -53,7 +61,7 @@ For each file:
 - Link to existing documentation instead of summarizing it.
 - Adjust cross-references so they point only at files you are actually generating.
 
-## 8. Write
+## 9. Write
 
 - Create `.agent/` and write the files.
 - Copy chosen specialist skills to `.agent/skills/<name>.md`, dropping the frontmatter and binding the procedure to the project's tools.
@@ -66,14 +74,14 @@ Project context, rules, and task workflows for AI agents live in `.agent/`.
 Start with `.agent/PROJECT.md`.
 ```
 
-## 9. Validate
+## 10. Validate
 
 - Run `scripts/validate-agent-dir.sh <target-repo-root>` from the skill directory and fix every error.
 - Run the verification commands you recorded in `PROJECT.md` when they are safe, fast, and need no credentials (lint, type check, unit tests). The goal is to confirm the commands exist and are spelled correctly. If a command fails for reasons that predate you, record that in the report; do not fix project code.
 - Confirm every path mentioned in `.agent/` exists.
 - Re-read `PROJECT.md` as an agent who has never seen the repository: could you make a safe change with it?
 
-## 10. Review the diff
+## 11. Review the diff
 
 Run `git status` and `git diff`. Check that:
 
@@ -82,6 +90,6 @@ Run `git status` and `git diff`. Check that:
 - Nothing is generic enough to apply unchanged to any repository. Delete or specialize it.
 - No secrets, hostnames, or personal data were copied in.
 
-## 11. Report
+## 12. Report
 
 Use the completion report format in `SKILL.md`. Leave the changes uncommitted unless the user asked for a commit.

@@ -4,6 +4,10 @@ All notable changes to this skill are recorded here. The format follows [Keep a 
 
 ## [Unreleased]
 
+### Added
+
+- A question step in install and update. After discovery and before writing, the agent asks the user, in one batch, about what the repository cannot settle: conflicting evidence, conventions the history does not establish, unrecorded facts, and intent. Non-interactive runs fall back to reported assumptions.
+
 ### Changed
 
 - README install instructions cover any agent: a one-command install through the `skills` CLI, and a manual clone-once-and-link install with each agent's skills directory.

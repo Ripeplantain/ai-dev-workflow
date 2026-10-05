@@ -7,7 +7,7 @@ How to learn what a repository is from evidence. The lists below are prompts, no
 1. Go from cheap and broad to expensive and narrow: root listing, then manifests and configuration, then CI, then documentation, then a sample of source.
 2. Record each fact with the file it came from.
 3. Prefer what is executed over what is described. CI configuration and manifest scripts outrank a README that may be stale.
-4. When sources disagree, check which is current (`git log` on the files), and note the disagreement.
+4. When sources disagree, check which is current (`git log` on the files), and note the disagreement. If that does not settle it and the answer changes what gets written, it becomes a question for the user.
 5. Mark anything you could not confirm as unknown. Do not fill the gap with what is typical for the stack.
 6. Skip dimensions that do not apply. A CLI tool has no design system.
 

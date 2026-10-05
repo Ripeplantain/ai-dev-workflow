@@ -48,6 +48,8 @@ Compare the current repository against `rules/project-installation.md`:
 
 Load templates and references only for the artifacts you are adding.
 
+Before applying, ask the user about anything the audit and the gaps left open, following the Questions section of `SKILL.md`: claims that contradict the code and look deliberate, artifacts you would remove, and restructuring. Ask once, with your recommendation for each.
+
 ## 5. Apply
 
 - Edit surgically. Preserve wording, ordering, and formatting of content you are not correcting.
@@ -56,6 +58,6 @@ Load templates and references only for the artifacts you are adding.
 
 ## 6. Validate, review, report
 
-Same as steps 9 to 11 of `workflows/install.md`. In the report, list each correction with what was wrong, and list separately anything you kept despite doubt.
+Same as steps 10 to 12 of `workflows/install.md`. In the report, list each correction with what was wrong, and list separately anything you kept despite doubt.
 
 If the audit finds nothing to change, say so. An update with an empty diff is a valid result.
