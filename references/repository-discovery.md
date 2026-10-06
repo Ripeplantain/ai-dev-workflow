@@ -18,7 +18,7 @@ Do not read vendored code, build output, lockfile bodies, or generated files. Do
 | Look for | Examples |
 |---|---|
 | Agent instruction files | `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, `.cursorrules`, `.cursor/rules/`, `.windsurfrules`, `.claude/`, nested copies in subdirectories |
-| Existing workflow directories | `.agent/`, legacy `.ai/` |
+| Existing workflow directories | `.agent/`, legacy `.ai/`, and any other directory holding project context, rules, agent roles, or task workflows for AI agents (`.agents/`, `docs/ai/`). Open it and judge by content: `.agents/skills/` alone is an installed-skills directory, not a workflow |
 | Contributor documentation | `README.md`, `CONTRIBUTING.md`, `docs/`, `ARCHITECTURE.md`, ADR directories, runbooks, PR and issue templates |
 
 ## Stack and tooling
@@ -62,6 +62,8 @@ Component directories, styling approach, theme and token files, shared UI packag
 ## Git conventions
 
 Recent `git log` (message format, scope of commits), branch names, commit lint configuration, PR template, CODEOWNERS, default branch, hooks.
+
+For branch naming, record whether the convention is stated (contributor docs, agent instruction files, a branch-name hook or lint rule, CI branch filters) or only observed (`git branch -a`, merge commit subjects). A stated convention is a fact. An observed one is a candidate to confirm with the user. Note the pattern separately for each kind of work you can see (features, bug fixes, hotfixes, releases); they often differ.
 
 ## Output of discovery
 

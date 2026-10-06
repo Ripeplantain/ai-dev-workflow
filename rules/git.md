@@ -7,7 +7,7 @@ The constraints. The step-by-step procedure is the commit specialist skill (`spe
 Discover them from evidence before acting:
 
 - Commit message format: recent `git log`, commitlint or similar configuration, `CONTRIBUTING.md`.
-- Branch naming and base branch: existing branches, CI triggers, contributor docs.
+- Branch naming and base branch: existing branches, CI triggers, contributor docs. Both can differ by kind of work (features, bug fixes, hotfixes, releases).
 - Pull request expectations: PR templates, CODEOWNERS, required checks in CI.
 
 Where the project has a convention, it wins. Where it has none, use the defaults in the commit skill: branches named `<type>/<short-slug>`, messages as `type(scope): lowercase claim, no period`.

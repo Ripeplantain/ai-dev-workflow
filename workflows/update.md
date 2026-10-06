@@ -20,6 +20,16 @@ If the repository has a `.ai/` directory that holds this kind of workflow (proje
 
 If both exist, treat `.agent/` as current, merge anything still valid from `.ai/`, and ask before deleting `.ai/`.
 
+### A workflow directory under another name
+
+If the workflow lives in a directory this skill did not name (`.agents/`, `docs/ai/`, or similar) and there is no `.agent/`, adopt it in place:
+
+1. Confirm it is a workflow and not tool plumbing, using the test in `SKILL.md`.
+2. Use that directory as the workflow directory for every step below. Do not rename it, and do not reshape it to match this skill's layout: its files, names, and structure are the project's. A missing `PROJECT.md` is a gap to raise, not a file to add unasked.
+3. Ask the user, with the other questions in step 4, whether to keep adopting it in place (recommended), move it to `.agent/` with `git mv` and fix every reference, or leave it untouched.
+4. Write entry pointers and cross-references with the directory's real name.
+5. Validate with the directory name as the second argument: `scripts/validate-agent-dir.sh <target-repo-root> <workflow-dir>`.
+
 ## 2. Rediscover
 
 Run discovery (`references/repository-discovery.md`) focused on what `.agent/` claims and on what changed. Reclassify the repository; projects grow, split, and occasionally shrink.
@@ -49,7 +59,7 @@ Compare the current repository against `rules/project-installation.md`:
 
 Load templates and references only for the artifacts you are adding.
 
-Before applying, ask the user about anything the audit and the gaps left open, following the Questions section of `SKILL.md`: claims that contradict the code and look deliberate, artifacts you would remove, and restructuring. Ask once, with your recommendation for each.
+Before applying, ask the user about anything the audit and the gaps left open, following the Questions section of `SKILL.md`: claims that contradict the code and look deliberate, artifacts you would remove, and restructuring. If `.agent/` records no branch naming convention, or only the unconfirmed `<type>/<short-slug>` default, and nothing in the repository states one, ask for it here too, per kind of work as in install. Ask once, with your recommendation for each.
 
 ## 5. Apply
 

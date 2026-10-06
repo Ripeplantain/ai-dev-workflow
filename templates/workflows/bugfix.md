@@ -24,7 +24,7 @@ Usually L1 or L2. Raise the level if the fix touches {{HIGH_RISK_AREAS_IN_THIS_P
 
 - Write a regression test that fails for the right reason first: {{WHERE_REGRESSION_TESTS_GO}}.
 - Make the smallest change that removes the cause. No refactoring on the way.
-- Work on a task branch and commit the fix with its test as one unit ({{GIT_RULES_LOCATION}}).
+- Work on a task branch named by the project's bug-fix pattern, and commit the fix with its test as one unit ({{GIT_RULES_LOCATION}}).
 
 ## 6. Verify
 

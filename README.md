@@ -127,7 +127,7 @@ Task effort scales with a five-level complexity scale, L0 (trivial) to L4 (criti
 ~/.agents/skills/ai-engineering-workflow/scripts/validate-agent-dir.sh /path/to/project
 ```
 
-Adjust the path to wherever you installed the skill. The installer runs this itself. It requires only Bash and standard Unix tools.
+Adjust the path to wherever you installed the skill. If the project keeps its workflow in a directory other than `.agent/`, pass that name as a second argument, for example `validate-agent-dir.sh /path/to/project .agents`. The installer runs this itself. It requires only Bash and standard Unix tools.
 
 ## Contributing
 

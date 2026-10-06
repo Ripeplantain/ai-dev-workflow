@@ -23,7 +23,7 @@ Typical order in this project:
 
 {{ORDERED_IMPLEMENTATION_STEPS_FOR_A_TYPICAL_FEATURE}}
 
-- Work on a task branch; commit each unit once it is coherent and green ({{GIT_RULES_LOCATION}}).
+- Work on a task branch named by the project's feature pattern; commit each unit once it is coherent and green ({{GIT_RULES_LOCATION}}).
 - Reuse existing code before adding new code.
 - Add tests alongside: {{WHAT_TESTS_A_FEATURE_NEEDS_HERE}}.
 - {{UI_STEP_IF_APPLICABLE}}

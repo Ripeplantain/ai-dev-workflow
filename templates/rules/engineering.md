@@ -54,7 +54,7 @@ Formatting and lint rules are enforced by {{FORMATTER_AND_LINTER}}; run them, do
 - Do not push, open a pull request, or merge unless asked. Never force-push or bypass hooks.
 - {{REFERENCE_TO_COMMIT_SKILL_IF_GENERATED}}
 
-<!-- INSTALLER: Use the project's own branch and message conventions where evidence shows them; otherwise the defaults are <type>/<short-slug> branches and "type(scope): lowercase claim, no period" messages. Point to .agent/skills/commit.md only if that file is generated; otherwise delete the last bullet. -->
+<!-- INSTALLER: Use the project's own branch and message conventions where the repository states them or the user gave them; otherwise the defaults are <type>/<short-slug> branches and "type(scope): lowercase claim, no period" messages. If branch patterns differ by kind of work, replace the branch bullet's placeholder with a sub-list, one line per kind (feature, bug fix, and any others the project names), each with its pattern, an example, and its base branch if it is not the default. Point to .agent/skills/commit.md only if that file is generated; otherwise delete the last bullet. -->
 
 ## Verify, then claim
 

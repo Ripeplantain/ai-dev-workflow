@@ -5,7 +5,7 @@ Governs what the installer may write into a target repository. Applies to Instal
 ## Non-negotiables
 
 - Setup requests are executed, not described.
-- The project-side directory is `.agent/`. Never create `.ai/`.
+- The project-side directory is `.agent/`. Never create `.ai/`. If the repository already keeps its AI workflow in another directory, that directory is the project-side directory: update it in place and never create `.agent/` beside it.
 - Every statement written into `.agent/` is backed by evidence in the repository or by something the user said. No invented commands, paths, conventions, or architecture.
 - Existing project instructions are preserved. Nothing in `.agent/` may contradict them.
 - `.agent/` is self-contained: it must work for a teammate or agent that does not have this skill installed. Never link from `.agent/` to a path inside the skill.
@@ -78,7 +78,7 @@ A small project whose README and contributor docs already cover its conventions 
 | `skills/database.md` | A database, ORM, or migration tool is present |
 | `skills/api-design.md` | The project exposes an API that others consume |
 | `skills/security-review.md` | Same condition as `rules/security.md`, at standard complexity or above |
-| `skills/commit.md` | The repository is under Git, at standard complexity or above. Bind branch naming and message format to the project's own conventions where it has them. Small projects get the same rules condensed into `RULES.md` |
+| `skills/commit.md` | The repository is under Git, at standard complexity or above. Bind branch naming and message format to the project's own conventions where it has them, keeping a separate branch pattern for each kind of work the project distinguishes. Small projects get the same rules condensed into `RULES.md` |
 | `skills/debugging.md`, `skills/testing.md`, `skills/refactoring.md` | Standard complexity or above, and the matching workflow was generated |
 
 Specialist skills are copied from `specialist-skills/<name>/SKILL.md` into `.agent/skills/<name>.md`, trimmed and bound to the project's tools. Do not copy one the project has no evidence for.

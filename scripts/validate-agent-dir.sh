@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 #
-# Validates a generated .agent/ directory in a target repository.
+# Validates a generated workflow directory in a target repository.
 #
-#   validate-agent-dir.sh [target-repo-root]   full validation of <root>/.agent
+#   validate-agent-dir.sh [target-repo-root] [workflow-dir]
+#                                              full validation of <root>/<workflow-dir>
+#                                              (default .agent; pass the real name, such
+#                                              as .agents, for a workflow adopted in place)
 #   validate-agent-dir.sh --links <dir>        only check relative Markdown links under <dir>
 #
 # Exits 1 if any error is found. Warnings do not affect the exit code.
@@ -23,6 +26,7 @@ warn() {
 }
 
 # Reports relative Markdown links under $1 whose target does not exist.
+# $2, if given, is a path pattern to leave out.
 check_links() {
   local file dir target
   while IFS= read -r file; do
@@ -35,7 +39,7 @@ check_links() {
       esac
       [ -e "$dir/$target" ] || err "$file: broken link -> $target"
     done < <(grep -o '\]([^)]*)' "$file" | sed -e 's/^](//' -e 's/)$//')
-  done < <(find "$1" -type f -name '*.md' -not -path '*/.git/*')
+  done < <(find "$1" -type f -name '*.md' -not -path '*/.git/*' -not -path "${2:-*/.git/*}")
 }
 
 finish() {
@@ -51,17 +55,33 @@ if [ "${1:-}" = "--links" ]; then
 fi
 
 root=${1:-.}
-agent="$root/.agent"
+name=${2:-.agent}
+name=${name%/}
+agent="$root/$name"
+# $name as a literal in a regular expression.
+name_re=$(printf '%s' "$name" | sed 's/[][\\.*^$/]/\\&/g')
+
+# Skills installed by a tool (skills/<name>/...) are not part of the workflow.
+installed="$agent/skills/*/*"
+
+# A workflow adopted in place keeps its own layout, so structure is advisory there.
+structure() {
+  if [ "$name" = ".agent" ]; then err "$1"; else warn "$1"; fi
+}
 
 if [ ! -d "$agent" ]; then
   err "$agent does not exist"
   finish
 fi
 
-[ -f "$agent/PROJECT.md" ] || err ".agent/PROJECT.md is missing"
+[ -f "$agent/PROJECT.md" ] || structure "$name/PROJECT.md is missing"
 [ -f "$agent/WORKFLOW.md" ] || [ -d "$agent/workflows" ] ||
-  err ".agent/ has no task workflow (WORKFLOW.md for a small project, workflows/ otherwise)"
-[ -d "$root/.ai" ] && warn ".ai/ exists alongside .agent/; migrate or remove the legacy directory"
+  structure "$name/ has no task workflow (WORKFLOW.md for a small project, workflows/ otherwise)"
+for other in .agent .agents .ai; do
+  [ "$other" != "$name" ] && [ -d "$root/$other" ] &&
+    [ -n "$(find "$root/$other" -type f -name '*.md' -not -path '*/skills/*' -print -quit)" ] &&
+    warn "$other/ exists alongside $name/; keep one workflow directory"
+done
 
 while IFS= read -r file; do
   rel=${file#"$root"/}
@@ -72,33 +92,35 @@ while IFS= read -r file; do
     err "$rel:$hit  (unresolved placeholder or installer note)"
   done < <(grep -n -e '{{' -e 'INSTALLER:' "$file" | cut -c1-120)
 
-  while IFS= read -r hit; do
-    warn "$rel:$hit  (mentions .ai/; the workflow directory is .agent/)"
-  done < <(grep -n -E '(^|[^A-Za-z0-9_/])\.ai/' "$file" | cut -c1-120)
+  if [ "$name" != ".ai" ]; then
+    while IFS= read -r hit; do
+      warn "$rel:$hit  (mentions .ai/; the workflow directory is $name/)"
+    done < <(grep -n -E '(^|[^A-Za-z0-9_/])\.ai/' "$file" | cut -c1-120)
+  fi
 
-  # Backticked .agent/ paths must exist in the target repository.
+  # Backticked workflow-directory paths must exist in the target repository.
   while IFS= read -r path; do
     case "$path" in
       *'*'* | *'<'* | *'{'*) continue ;;
     esac
     [ -e "$root/$path" ] || err "$rel: references missing file $path"
-  done < <(grep -o '`\.agent/[^` ]*`' "$file" | tr -d '`' | sed 's/[.,:;]*$//' | sort -u)
+  done < <(grep -o "\`$name_re/[^\` ]*\`" "$file" | tr -d '`' | sed 's/[.,:;]*$//' | sort -u)
 
   lines=$(wc -l < "$file" | tr -d ' ')
   [ "$lines" -gt 200 ] && warn "$rel is $lines lines; generated files should stay small"
-done < <(find "$agent" -type f -name '*.md')
+done < <(find "$agent" -type f -name '*.md' -not -path "$installed")
 
-check_links "$agent"
+check_links "$agent" "$installed"
 
-# Something outside .agent/ must point agents at it.
+# Something outside the workflow directory must point agents at it.
 pointer=0
 for entry in AGENTS.md CLAUDE.md GEMINI.md .cursorrules .windsurfrules \
   .github/copilot-instructions.md .cursor/rules; do
-  if [ -e "$root/$entry" ] && grep -rq '\.agent/' "$root/$entry" 2>/dev/null; then
+  if [ -e "$root/$entry" ] && grep -rq "$name_re/" "$root/$entry" 2>/dev/null; then
     pointer=1
     break
   fi
 done
-[ "$pointer" -eq 1 ] || warn "no agent entry file (AGENTS.md, CLAUDE.md, ...) points to .agent/"
+[ "$pointer" -eq 1 ] || warn "no agent entry file (AGENTS.md, CLAUDE.md, ...) points to $name/"
 
 finish

@@ -45,7 +45,7 @@ Before the first edit:
 2. If HEAD is the default branch, or a branch for other work: `git switch -c <type>/<short-slug>`. Uncommitted changes come along.
 3. If you are already on this task's branch, stay on it.
 
-Name the branch `<type>/<short-slug>`, with the type from the commit types below: `feat/csv-export`, `fix/login-redirect`, `chore/bump-deps`. If the project has its own branch naming convention, use that instead.
+Name the branch `<type>/<short-slug>`, with the type from the commit types below: `feat/csv-export`, `fix/login-redirect`, `chore/bump-deps`. If the project has its own branch naming convention, use that instead. A project may have a different pattern, and a different base branch, for each kind of work (features, bug fixes, hotfixes, releases): pick the one that matches this task, and ask if none does.
 
 ### 2. Commit each unit when it is done and green
 

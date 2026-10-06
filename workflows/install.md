@@ -8,6 +8,7 @@ Creates `.agent/` in a target repository that does not have one. Governed by `ru
 - Run `git status`. Note uncommitted changes so your diff stays separable from them.
 - List the root and one or two levels of the main source directories.
 - If `.agent/` already exists, stop and switch to `workflows/update.md`.
+- If another directory already holds an AI workflow (for example `.agents/` with project context, rules, or task workflows in it), stop and switch to `workflows/update.md`. Do not create `.agent/` beside it. A directory holding only installed skills or tool settings does not count; see "An existing workflow under another name" in `SKILL.md`.
 
 ## 2. Read existing instructions
 
@@ -37,7 +38,9 @@ Stop here and present the list instead of writing files only if the user asked f
 
 Follow the Questions section of `SKILL.md`. Go through the unknowns and conflicts from discovery and the keep-or-skip list from step 5, and pick out the ones where the answer changes a command, a rule, or whether a file exists. Ask them together, each with the evidence you found and a recommended option, then wait for the answers before loading templates.
 
-Typical install questions: which package manager is canonical when lockfiles disagree, whether to record the Git practice the history shows or a stricter one, where the project deploys when nothing configures it, and whether there are rules for agents that no file states.
+Always include the branch naming convention unless a document, hook, or CI filter states it. Ask for it per kind of work (features, bug fixes, and whatever else the team distinguishes, such as hotfixes or releases), with the base branch for each. Show the names you observed, recommend the patterns they suggest (or `<type>/<short-slug>` if there are none), and write the answer, one line per kind of work, wherever the Git rules go: `PROJECT.md`, `RULES.md` or `rules/engineering.md`, and `skills/commit.md`. Each generated task workflow names the pattern for its own kind of work.
+
+Other typical install questions: which package manager is canonical when lockfiles disagree, whether to record the commit practice the history shows or a stricter one, where the project deploys when nothing configures it, and whether there are rules for agents that no file states.
 
 If nothing is open, or nobody can answer, continue and note it for the report.
 

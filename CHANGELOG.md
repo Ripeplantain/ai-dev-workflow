@@ -7,6 +7,8 @@ All notable changes to this skill are recorded here. The format follows [Keep a 
 ### Added
 
 - A question step in install and update. After discovery and before writing, the agent asks the user, in one batch, about what the repository cannot settle: conflicting evidence, conventions the history does not establish, unrecorded facts, and intent. Non-interactive runs fall back to reported assumptions.
+- Branch naming is asked on every install, and on update when `.agent/` has no confirmed convention, unless the repository states it in a document, hook, or CI filter. Branch names observed in the history become the recommended option, not a settled fact. The question is asked per kind of work (features, bug fixes, and any others the team distinguishes), with the base branch for each, and the generated rules record one pattern per kind.
+- A repository that already keeps an AI workflow in a directory under another name (such as `.agents/`) is updated in place instead of getting a second `.agent/` beside it. Directories holding only installed skills or tool settings are not treated as workflows. The validator takes the workflow directory name as an optional second argument.
 
 ### Changed
 

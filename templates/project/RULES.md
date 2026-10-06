@@ -38,7 +38,7 @@ Do not introduce a new architectural pattern, directory layout, or tool.
 - No `Co-Authored-By`, `Generated with`, or similar trailers, and no attribution in files.
 - Do not push or merge unless asked.
 
-<!-- INSTALLER: Use the project's own conventions where evidence shows them; otherwise default to <type>/<short-slug> branches and "type(scope): lowercase claim, no period" messages. -->
+<!-- INSTALLER: Use the project's own conventions where the repository states them or the user gave them; otherwise default to <type>/<short-slug> branches and "type(scope): lowercase claim, no period" messages. If branch patterns differ by kind of work, replace the branch bullet's placeholder with a sub-list, one line per kind (feature, bug fix, and any others the project names), each with its pattern, an example, and its base branch if it is not the default. -->
 
 ## UI
 
