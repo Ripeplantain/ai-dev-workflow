@@ -1,20 +1,30 @@
-# Universal AI Engineering Workflow Skill
+# agent-workflow
 
-An installable skill for AI coding agents. Point it at any software repository and it inspects the project, works out what that project actually needs, and creates or updates a tailored AI engineering workflow in the repository's `.agent/` directory.
+An installable skill for AI coding agents. Point it at any repository — software, AI/LLM, or data — and it reads the evidence in that repo, works out what it actually needs, and writes one tool-neutral agent workflow plus the thin adapters that let Claude Code and Codex dispatch the roles as real subagents.
 
 > AI should adapt to the repository. The repository should not adapt to the AI.
 
 ## What it does
 
 ```text
-Inspect target repo → Understand architecture → Determine what it needs → Generate / update .agent/ → Validate
+scan_repo.sh → classify → decide artifacts → plan (you approve) → write → validate → report
 ```
 
-- **Does the setup.** Asked to set up a workflow, it writes the files, verifies them, and reports. It does not stop at recommendations.
-- **Works from evidence.** Commands, paths, and conventions come from the repository's manifests, CI, code, and docs. Nothing is guessed.
-- **Generates only what is needed.** A small tool may get two short files. A large monorepo gets agents, rules, workflows, and context. Templates are source material, never a checklist.
-- **Preserves what exists.** Existing `AGENTS.md`, `CLAUDE.md`, contributor docs, and architecture docs stay authoritative and are linked, not duplicated.
-- **Keeps it current.** Re-running it audits the existing `.agent/` against the repository and makes targeted corrections.
+- **Works from evidence.** Every command, path, and convention comes from the repo's manifests, CI, scripts, and docs. An invented `pnpm test` that does not exist is worse than an admitted gap, because agents run it confidently.
+- **Plans before writing.** You get a one-screen plan — classification, roles, the exact file list, what it is skipping and why — and nothing is written until you approve it. `--yes` skips the wait, not the report.
+- **Writes the smallest install that changes behaviour.** A small CLI gets 8–12 files. A large monorepo gets ~25. Every file has to pass the necessity test: would an agent behave worse here without it?
+- **Preserves what exists.** An existing `AGENTS.md` is merged into, never overwritten. Hand-edited files are left alone and listed in the report.
+- **Never leaves the repo dirtier.** It does not commit, push, install dependencies, touch lockfiles, or run schema commands. If the tree is already dirty, it says so and asks before building on top.
+
+## Three modes
+
+| You... | Mode | What happens |
+|---|---|---|
+| have no `.agent/` and want a workflow | **install** | Scan, classify, plan, write on approval |
+| have a `.agent/` from any version | **update** | Audit for drift, propose targeted fixes, migrate v1 → v2 |
+| are coming back to a repo after weeks | **re-orient** | Read-only report: dirty tree grouped by area, stashes, branch state, suggested commit split |
+
+Re-orient exists because the most common real problem is work built and left uncommitted. It makes that legible before any agent piles new work on top of it.
 
 ## Install
 
@@ -39,8 +49,8 @@ npx skills add Ripeplantain/ai-dev-workflow -g -y -a claude-code -a codex -a cur
 Clone the skill once, then link it into the skills directory of each agent you use:
 
 ```bash
-git clone https://github.com/Ripeplantain/ai-dev-workflow.git ~/.agents/skills/ai-engineering-workflow
-ln -s ~/.agents/skills/ai-engineering-workflow ~/.claude/skills/ai-engineering-workflow
+git clone https://github.com/Ripeplantain/ai-dev-workflow.git ~/.agents/skills/agent-workflow
+ln -s ~/.agents/skills/agent-workflow ~/.claude/skills/agent-workflow
 ```
 
 Repeat the `ln -s` line for each agent, creating the directory first if it does not exist:
@@ -55,79 +65,83 @@ Repeat the `ln -s` line for each agent, creating the directory first if it does 
 | OpenCode | `~/.config/opencode/skills/` |
 | Windsurf | `~/.codeium/windsurf/skills/` |
 
-To update every agent at once, run `git -C ~/.agents/skills/ai-engineering-workflow pull`.
+To update every agent at once, run `git -C ~/.agents/skills/agent-workflow pull`.
 
-For one project only, clone into that project's `.claude/skills/ai-engineering-workflow` (Claude Code) or `.agents/skills/ai-engineering-workflow` (most other agents).
+For one project only, clone into that project's `.claude/skills/agent-workflow` (Claude Code) or `.agents/skills/agent-workflow` (most other agents).
 
-An agent with no skills directory: clone the repository anywhere and tell the agent to read `SKILL.md` from that location.
+> Upgrading from v1: the skill was called `ai-engineering-workflow`. Re-link it under the name `agent-workflow` and delete the old link, or both will load.
 
 ## Use
 
 Open the target repository and ask the agent, for example:
 
 ```text
-Use the ai-engineering-workflow skill to set up the AI workflow for this project.
+Use the agent-workflow skill to set up agents for this project.
 ```
 
 ```text
-Use the ai-engineering-workflow skill to update this project's .agent/ directory.
+Use the agent-workflow skill to update this project's .agent/ directory.
 ```
 
 ```text
-Use the ai-engineering-workflow skill and show me what you would generate, without writing anything.
+Use the agent-workflow skill to re-orient me — I have not touched this repo in two months.
 ```
-
-The agent inspects the repository, classifies it, decides which artifacts are justified, asks you about anything the repository leaves open (conflicting evidence, conventions it cannot see), writes the files, validates the result, reviews the diff, and reports what it did and what it skipped. It leaves the generated workflow uncommitted for you to review.
-
-Once installed, the workflow tells agents how to handle Git on real tasks: a `<type>/<short-slug>` branch per task, one commit per finished unit, files staged by path, no attribution trailers, and no push or merge unless asked. A project's own branch and message conventions take precedence where they exist.
 
 ## What gets generated
 
-Output depends on the repository. Typical shapes:
+```text
+AGENTS.md                      canonical; routes into .agent/ and names when to delegate
+CLAUDE.md                      exactly "@AGENTS.md"
+.agent/
+├── PROJECT.md                 stack, real commands, layout, invariants, version stamp
+├── rules/
+│   ├── checkpoints.md         hard stops: commit, push, deps, lockfiles, schema, secrets, cost
+│   ├── repo-sanity.md         what not to add, and where to look first
+│   └── …                      engineering, testing, security, design-system, data-contract, evals
+├── agents/<role>.md           4–6 neutral role docs, each with a tier
+└── workflows/<task>.md        feature, fix, and the ones the repo earns
+.claude/agents/<role>.md       adapter: tier → model, tools, points at the role doc
+.codex/agents/<role>.toml      adapter: reasoning effort, sandbox, points at the role doc
+```
 
-| Repository | Typical `.agent/` contents |
-|---|---|
-| Small tool or library | `PROJECT.md`, `WORKFLOW.md`, usually `RULES.md` |
-| Standard production app | `PROJECT.md`, `agents/`, `rules/`, `workflows/`, selected `skills/` |
-| Large repo or monorepo | The above plus `context/` (architecture, workspaces, design system) |
+Roles are written once as neutral markdown; the adapters are generated wrappers that carry only the tool-specific bits. Any agent that reads `AGENTS.md` — Cursor, Gemini CLI, Copilot — gets the workflow without an adapter. An adapter never carries an instruction its role doc does not, or the two drift.
 
-The installer also adds a short pointer to the project's existing agent entry file (or creates a minimal `AGENTS.md`) so agents find `.agent/`. That is the only change outside `.agent/`.
+Repos with data pipelines or an LLM feature also get the data/AI layer: a data contract with halt and quarantine tiers, eval cases with graders ordered cheapest first, prompt versioning, and a paid-call cost checkpoint.
 
-Worked examples: [small project](examples/small-project/README.md), [standard project](examples/standard-project/README.md), [monorepo](examples/monorepo/README.md).
+Worked examples: [small](examples/small.md), [medium with an LLM feature](examples/medium-llm.md), [large monorepo](examples/large-monorepo.md).
 
 ## How it is organized
 
 | Path | Role |
 |---|---|
-| [SKILL.md](SKILL.md) | The orchestrator: modes, procedure, and what to load when |
-| [workflows/](workflows/) | `install` and `update`, plus task workflows (feature, bugfix, refactor, investigation, migration, UI feature, code review) |
-| [rules/](rules/) | Constraints the skill itself follows, including [project-installation](rules/project-installation.md), which decides what gets generated |
-| [references/](references/) | Detail loaded on demand: repository discovery, task complexity, context management, design tokens, monorepos, definition of done |
-| [templates/](templates/) | Source material for generated project files |
-| [specialist-skills/](specialist-skills/) | Focused procedures: commit, debugging, testing, database, API design, refactoring, security review |
+| [SKILL.md](SKILL.md) | The orchestrator: modes, non-negotiables, budgets, what to load when |
+| [workflows/](workflows/) | [install](workflows/install.md), [update](workflows/update.md), [reorient](workflows/reorient.md) |
+| [references/](references/) | Loaded on demand: [selection](references/selection.md), [questions](references/questions.md), [roles](references/roles.md), [adapters](references/adapters.md), [data-ai](references/data-ai.md), [invariants](references/invariants.md), [monorepos](references/monorepos.md), [specialists](references/specialists.md) |
+| [templates/](templates/) | Source material for generated files, never a checklist |
+| [scripts/scan_repo.sh](scripts/scan_repo.sh) | Read-only evidence scan; every mode starts here |
+| [scripts/validate.sh](scripts/validate.sh) | Checks a generated install |
 | [examples/](examples/) | What a proportionate result looks like at three sizes |
-| [scripts/validate-agent-dir.sh](scripts/validate-agent-dir.sh) | Checks a generated `.agent/` for placeholders, broken references, and a missing entry pointer |
 
-The skill loads progressively. An agent reads `SKILL.md`, then the workflow for the mode, then only the references and templates the repository calls for. A project with no UI never loads the design-system material; a single-package project never loads the monorepo reference.
+The skill loads progressively: `SKILL.md`, then the workflow for the mode, then only the references the repo calls for. A repo with no UI never loads the design-system material; a single-package repo never loads the monorepo reference.
 
-## Concepts
+## Vocabulary
 
-| Concept | Answers |
-|---|---|
-| Agent | Who is carrying a responsibility (planner, investigator, implementer, tester, reviewer) |
-| Skill | What specialized procedure is needed (debugging, database, security review) |
-| Workflow | How a type of task progresses (feature, bugfix, migration) |
-| Rule | What constraints always hold (repo sanity, testing, security) |
+| Concept | Answers | Lives in |
+|---|---|---|
+| Role | who carries a responsibility | `.agent/agents/` |
+| Rule | what constraint always holds | `.agent/rules/` |
+| Workflow | how a type of task progresses | `.agent/workflows/` |
+| Fact | what is true of this repo | `.agent/PROJECT.md` |
 
-Task effort scales with a five-level complexity scale, L0 (trivial) to L4 (critical or architectural), defined in [references/task-complexity.md](references/task-complexity.md).
+Roles describe work, not technology: `implementer`, never `react-agent`. Tiers (`strong`, `default`, `cheap`) stay abstract in the role doc so the adapters can map them to each tool's models.
 
 ## Validating a generated workflow
 
 ```bash
-~/.agents/skills/ai-engineering-workflow/scripts/validate-agent-dir.sh /path/to/project
+~/.agents/skills/agent-workflow/scripts/validate.sh /path/to/project
 ```
 
-Adjust the path to wherever you installed the skill. If the project keeps its workflow in a directory other than `.agent/`, pass that name as a second argument, for example `validate-agent-dir.sh /path/to/project .agents`. The installer runs this itself. It requires only Bash and standard Unix tools.
+It checks exact-case entry files, the `CLAUDE.md` pointer, the version stamp, role tiers, adapters mirroring roles, leftover placeholders, broken links, missing referenced paths, attribution trailers, and the size budgets. If the project keeps its workflow in a directory other than `.agent/`, pass that name as a second argument. `--links <dir>` checks only relative links. Requires Bash 3.2 and standard Unix tools; the installer runs it itself.
 
 ## Contributing
 

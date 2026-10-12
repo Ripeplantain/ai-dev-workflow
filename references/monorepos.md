@@ -1,48 +1,43 @@
-# Reference: Monorepos and Multi-Service Repositories
+# Monorepos and multi-service repos
 
-Load only when discovery finds workspaces, multiple packages, or multiple deployables.
+Load when the scan reports `workspaces`, several manifests, or multiple deployables.
 
 ## Establish the workspace model
 
 | Question | Evidence |
 |---|---|
-| What defines the workspaces? | `pnpm-workspace.yaml`, `workspaces` in `package.json`, `nx.json`, `turbo.json`, `go.work`, Cargo `[workspace]`, Gradle `settings.gradle`, Maven modules, Bazel files, or simply several independent manifests |
-| What are the units? | Apps (deployable), services (deployable, usually networked), packages or libraries (consumed by other units), tooling and configuration packages |
-| What is shared? | Shared UI, database or schema packages, generated API clients, common types, configuration presets |
-| Which way do dependencies point? | Internal dependencies in manifests, project graph (`nx graph`, `turbo` pipeline, `go.work`), boundary lint rules |
-| How are tasks run? | Root scripts, task-runner pipelines, filters (`pnpm --filter`, `turbo run --filter`, `nx run`, `nx affected`, `go test ./path/...`, `cargo -p`) |
+| What defines the workspaces? | `pnpm-workspace.yaml`, `workspaces` in `package.json`, `nx.json`, `turbo.json`, `go.work`, Cargo `[workspace]`, or simply several independent manifests |
+| What are the units? | Apps (deployable), services (deployable, networked), packages (consumed by other units), tooling/config packages |
+| What is shared? | Shared UI, database or schema packages, generated API clients, common types, config presets |
+| Which way do dependencies point? | Internal dependencies in manifests, project graph (`nx graph`, `turbo` pipeline), boundary lint rules |
+| How are tasks run? | Root scripts and filters (`pnpm --filter`, `turbo run --filter`, `nx affected`, `go test ./path/...`, `cargo -p`) |
 | How does CI decide what to run? | Path filters, affected-project detection, per-workspace jobs |
-| How are units versioned and released? | Changesets, release tooling, independent versus locked versions, per-service deploy jobs |
+| How are units released? | Changesets, release tooling, independent versus locked versions, per-service deploy jobs |
 
-## What agents need to know
+## What goes where
 
-Write these into `.agent/context/workspaces.md` (source: `templates/context/workspaces.md`), with a short summary in `PROJECT.md`:
+Put the workspace model in `.agent/PROJECT.md` › Layout, not in a separate context file. One line per unit: path, kind, purpose. Then, in the same section:
 
-- The units, one line each: path, kind, purpose.
-- Allowed dependency direction, and anything that must never depend on something else.
-- Where shared code belongs, so agents extend the shared package instead of duplicating into an app.
-- Commands for one workspace and for affected workspaces. Running everything is rarely the right default in a large repository.
+- The allowed dependency direction, and anything that must never depend on something else.
+- Where shared code belongs, so an agent extends the shared package instead of copying into an app.
+- Commands for one workspace and for affected workspaces. Running everything is rarely the right default here, and `PROJECT.md` › Commands should give the filtered form first.
 - What a change to a shared package requires: which consumers to build and test.
-- Any workspace with a different language, toolchain, or deployment path.
+- Any workspace with a different language, toolchain, or deploy path.
 
-## Scoped instructions
+If that pushes `PROJECT.md` past 120 lines, the overflow goes to `.agent/rules/architecture.md`, not to a new context file.
 
-Default to one `.agent/` at the repository root. Add workspace-specific instructions only when a workspace genuinely needs different behavior:
+## Nested AGENTS.md
 
-- A different language or toolchain.
-- A different architecture or testing approach.
-- Regulatory or security constraints that apply to one unit.
+Default to one root `AGENTS.md` and one `.agent/`. Add `apps/<x>/AGENTS.md` only where a unit has commands or rules that genuinely differ — a different language or toolchain, a different testing approach, or constraints that apply to that unit alone. Nested files take precedence locally, so keep each one to the difference and point back to the root for everything else. Never generate a near-identical file per workspace.
 
-When that is true, prefer a section in `.agent/context/workspaces.md`. Use a nested instruction file inside the workspace only when the difference is too large for a section, or the project already uses nested instruction files. Never generate a near-identical file per workspace.
-
-## Task guidance to carry into generated workflows
+## Carry into the generated workflows
 
 - Identify the affected workspaces first, then their dependents.
-- Make the change in the unit that owns the concern. Cross-workspace changes are at least L3 when they alter a shared interface (`references/task-complexity.md`).
-- Verify the changed workspace and every dependent that could break, using the project's affected or filtered commands.
+- Make the change in the unit that owns the concern.
+- Verify the changed workspace and every dependent that could break, using the repo's affected or filtered commands.
 - Do not introduce a dependency that reverses the established direction or creates a cycle.
-- Keep versions of shared dependencies aligned the way the repository already does.
+- Keep shared dependency versions aligned the way the repo already does.
 
-## Multi-service repositories without a workspace tool
+## Multi-service without a workspace tool
 
-Treat each service directory as a unit with its own commands. Document how services communicate (HTTP, queues, shared database), where the contracts are defined, and how to run a service with its dependencies locally.
+Treat each service directory as a unit with its own commands. Record how services communicate (HTTP, queues, shared database), where the contracts live, and how to run one service with its dependencies locally.

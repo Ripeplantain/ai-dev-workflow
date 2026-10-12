@@ -1,148 +1,91 @@
 ---
-name: ai-engineering-workflow
-description: Sets up or updates a tailored `.agent/` AI engineering workflow inside any software repository. Use when asked to install, initialize, configure, set up, update, refresh, or audit a project's AI workflow, agent instructions, or `.agent/` directory. Inspects the repository, classifies it, then creates or updates only the workflow files that repository actually needs.
+name: agent-workflow
+description: Design, install, update, or re-orient a multi-agent workflow for any software, AI/LLM, or data project, new or existing, that works across Claude Code, Codex, and any agent reading AGENTS.md. Use this whenever the user wants to set up agents for a repo, add or refresh AGENTS.md / CLAUDE.md / .agent/ / subagents, asks "how should agents work on this project", is starting a new project, returns to an old or messy repo ("where was I", "re-orient me", "what state is this in"), or wants to upgrade an existing .agent/ install, even if they never say "workflow".
 metadata:
-  version: 0.2.0
+  version: 2.0.0
 ---
 
-# Universal AI Engineering Workflow
+# agent-workflow
 
-This skill creates and maintains an AI engineering workflow in **other** repositories. The workflow lives in the target repository's `.agent/` directory and is tailored to how that repository really works.
+Generates a project-specific agent workflow from evidence in the repo. The output is one tool-neutral workflow (`AGENTS.md` + `.agent/`) plus thin adapters that let Claude Code and Codex actually dispatch the roles as subagents.
 
-> AI adapts to the repository. The repository does not adapt to the AI.
+Skill version: **2.0.0**. Every install stamps this into `.agent/PROJECT.md` so later runs know what they are upgrading.
 
-Paths in this file are relative to the skill's own directory. `.agent/` always means the workflow directory in the target repository: `.agent/` by default, or the directory the repository already uses for this purpose (see [An existing workflow under another name](#an-existing-workflow-under-another-name)).
+## The model in one paragraph
 
-## Core invariant
+Roles are written once, as neutral markdown in `.agent/agents/<role>.md`. That is the source of truth any agent can read. Adapters (`.claude/agents/<role>.md`, `.codex/agents/<role>.toml`) are generated wrappers that point at the role doc and set the tool-specific bits: model tier, sandbox, tools. So "multi-agent" means something concrete here: a main agent that can hand bounded work to real subagents, with role docs as the shared contract. When a tool has no subagents, the same role docs still work as phases one agent walks through. Never let an adapter carry instructions the role doc does not, or the two will drift.
 
-When asked to install, initialize, configure, set up, or update a project's AI workflow, you **do the work**: inspect the repository, write the files, verify them, and report. Stopping at "I recommend creating a `.agent/` directory" is a failure. Recommend-only output is correct only when the user explicitly asks for a plan, a preview, or a dry run.
+## Pick the mode
 
-Doing the work includes asking. A short batch of questions before writing (see [Questions](#questions)) is part of the procedure, not a way of stopping short of it.
-
-## Choose the mode
-
-| Situation | Mode | Load |
+| The user... | Mode | Read |
 |---|---|---|
-| No `.agent/` in the target repository | Install | `workflows/install.md` |
-| `.agent/` exists | Update | `workflows/update.md` |
-| A legacy `.ai/` workflow directory exists and `.agent/` does not | Update (migrate first) | `workflows/update.md` |
-| A workflow lives in a directory with another name (`.agents/`, `docs/ai/`, ...) and `.agent/` does not exist | Update (adopt in place) | `workflows/update.md` |
-| User wants an engineering task done, not a workflow set up | Task | See [Task mode](#task-mode) |
+| has no `.agent/` and wants a workflow (new or existing repo) | **install** | `workflows/install.md` |
+| has a `.agent/` (any version) and wants it refreshed, upgraded, or fixed | **update** | `workflows/update.md` |
+| is returning to a repo, asks what state it is in, or the tree is dirty and they want to get going | **re-orient** | `workflows/reorient.md` |
 
-If the user says "set up" but `.agent/` already exists, run Update. Never overwrite an existing workflow wholesale.
+If unsure between install and re-orient on a dirty repo, run re-orient first. It is read-only and its findings feed the install plan.
 
-### An existing workflow under another name
+Always start every mode with the scan:
 
-Before choosing Install, check whether the repository already has a workflow somewhere else. Judge by content, not by name: a directory is a workflow directory when it holds project context, rules, agent roles, or task workflows written for AI agents. Common places are `.agents/`, `.ai/`, `docs/ai/`, and `.claude/` or `.cursor/rules/` when they hold more than tool settings.
+```bash
+bash <skill-dir>/scripts/scan_repo.sh <repo-root>
+```
 
-A directory that holds only tool plumbing is not a workflow: installed skills (`.agents/skills/`, `.claude/skills/`), settings files, caches. Leave it alone and run Install as usual.
+It prints the evidence (stack, package manager, lockfiles, scripts, CI, git state, existing agent files, data/AI signals, hygiene problems) as plain `key: value` lines. Read it before reading anything else in the repo; it tells you where to look. It is read-only.
 
-When a workflow exists, never create `.agent/` beside it. Two workflow directories are two sources of truth, and agents will follow whichever they read first. Instead:
+## Non-negotiables
 
-1. Treat the existing directory as the workflow directory and run Update against it. Keep its name and its layout; read every `.agent/` path in this skill as that directory.
-2. Ask before doing anything else with it. The options, recommended first: adopt it in place, move it to `.agent/` with `git mv`, or leave it untouched and stop. Ask this with the other questions in step 6. If nobody can answer, adopt in place.
-3. If both `.agent/` and another workflow directory already exist, treat `.agent/` as current, report the duplicate, and ask before merging or deleting either.
+These come from how this user actually works. Each has a reason; keep the reason in mind when a case is unusual.
 
-## The procedure
-
-Install and Update both follow this sequence. The workflow file for the mode gives the detail for each step.
-
-1. **Inspect** the target repository: root listing, manifests, directory shape, Git state.
-2. **Read existing instructions**: `AGENTS.md`, `CLAUDE.md`, editor and assistant rule files, `CONTRIBUTING.md`, architecture docs. These are authoritative and must be preserved.
-3. **Discover** architecture and tooling from evidence, following `references/repository-discovery.md`. Do not guess; an unconfirmed fact is recorded as unknown or left out.
-4. **Classify** the repository by complexity (small, standard, large) and topology (it may have several).
-5. **Decide the artifacts** using `rules/project-installation.md`. Each file must pass the necessity test before it is written.
-6. **Ask** the user, in one batch and before writing anything, what the repository could not settle (see [Questions](#questions)).
-7. **Load only the templates and references** the decision calls for (see the table below).
-8. **Customize**: replace every placeholder with repository evidence and the user's answers, delete sections with nothing to say, and use the project's real commands, paths, and names.
-9. **Write or update `.agent/`**, and make sure the project's agent entry file points to it.
-10. **Validate**: run `scripts/validate-agent-dir.sh <target-repo-root>` and execute the verification commands you documented, where it is safe to do so.
-11. **Review the diff** (`git status`, `git diff`) and remove anything that is generic, duplicated, or unsupported by evidence.
-12. **Report** what was created, changed, skipped, asked, and assumed.
-
-## Questions
-
-Discovery answers most things, and anything the repository answers is never asked. What is left goes to the user in step 6, because a wrong guess written into `.agent/` is repeated on every later task.
-
-Ask when the answer changes what gets written and the repository cannot give it:
-
-| Kind | Examples |
-|---|---|
-| Conflicting evidence | Two lockfiles from different package managers; a README command that CI or the manifest contradicts |
-| A convention the repository does not establish | Branch naming (see below); commit rules when the history shows no clear pattern, or when a template rule would be stricter than current practice |
-| A fact nothing records | Deployment target, required environments, a command with no script (type check, single test) |
-| Intent | Things agents must always or never do here that no file states; whether a borderline artifact is wanted |
-
-Branch naming is asked on every install unless the convention is written down: in a contributor document, an existing agent instruction file, a branch-name hook or lint rule, or CI branch filters that fix the pattern. Branch names seen in `git branch -a` or in merge commits are not enough to settle it, because merged branches are deleted and a few survivors rarely show the whole rule. Use them as the recommended option instead, followed by the default `<type>/<short-slug>` when it differs.
-
-Ask for the pattern per kind of work, not for one pattern. Teams commonly name feature branches one way and bug-fix branches another, with further patterns for hotfixes, releases, or chores, and a different base branch for some of them. Ask which kinds of work have their own pattern, what each pattern is (prefix, separator, ticket ID, slug style), and which branch each is cut from. Record the answer as one line per kind of work, in the user's own words for the kinds, so an agent starting a bug fix reads the bug-fix pattern and not a general one.
-
-How to ask:
-
-- Finish discovery first, then ask once. Do not interleave questions with exploration, and do not ask again later for something you could have asked here.
-- Keep it to the questions that matter, usually one to four. Apart from branch naming there is no fixed list: every question comes from something this repository left open.
-- For each question, say what you found and offer concrete options with your recommended one first, so the user can answer in a word.
-- Use the agent's structured question tool if it has one; otherwise ask in a plain message and wait.
-- An answer is evidence. Write it into `.agent/` as fact and name it in the report.
-
-Do not ask when the user said not to, or when nobody can answer (a non-interactive or scripted run). Then take the best-supported option, and list each such choice in the report as an assumption with the alternative. If discovery left nothing open, skip the step and say so in the report.
-
-## Progressive context loading
-
-Read only what the current step and this repository require. Never load the whole skill up front. `references/context-management.md` explains the budget.
-
-| Load | When |
-|---|---|
-| `workflows/install.md` or `workflows/update.md` | Always, for the chosen mode |
-| `rules/project-installation.md` | Always, before deciding artifacts |
-| `references/repository-discovery.md` | Always, during discovery |
-| `templates/project/PROJECT.md` | Always, when writing project context |
-| `templates/project/WORKFLOW.md` | Small projects, always |
-| `templates/project/RULES.md` | Small projects, when kept in step 5 |
-| `templates/agents/*`, `templates/rules/*`, `templates/workflows/*` | Only the specific files selected in step 5 |
-| `references/monorepos.md`, `templates/context/workspaces.md` | Workspace or multi-service evidence found |
-| `rules/design-system.md`, `references/design-tokens.md`, `templates/context/design-system.md`, `templates/rules/design-system.md` | UI code found |
-| `templates/context/architecture.md` | Large projects, or architecture that `PROJECT.md` cannot summarize in a few lines |
-| `specialist-skills/<name>/SKILL.md` | Only the specialists the project has evidence for (see `rules/project-installation.md`) |
-| `references/task-complexity.md`, `references/definition-of-done.md` | When generating workflows, or in Task mode |
-| `examples/*` | Only if unsure what a proportionate result looks like |
-
-A repository with no UI never needs the design-system files. A repository with no database never needs the database specialist. A single-package repository never needs the monorepo reference.
-
-## Templates are source material
-
-Files under `templates/` are raw material, not a checklist of files to produce. A template is used only when the installer has decided that artifact is necessary. Sections of a used template are deleted when the repository gives them nothing to say. No generated file may contain a leftover placeholder or installer note.
+1. **Evidence only.** Every command, path, and convention in the output must come from the repo (package.json scripts, Makefile, CI files, existing docs). If you cannot find the test command, write that it is unknown and ask. An invented `pnpm test` that does not exist is worse than a gap, because agents will run it confidently.
+2. **AGENTS.md is canonical.** `CLAUDE.md` contains only `@AGENTS.md` (plus nothing else unless the user already put Claude-only content there, which you keep below the import). Preserve any existing AGENTS.md content: merge into it, never overwrite it.
+3. **Exact-case filenames.** `AGENTS.md`, `CLAUDE.md`. Lowercase `agents.md` works on macOS and breaks on Linux CI. Rename wrong-case files only with approval, using `git mv` in two steps (to a temp name, then the final name) so case-insensitive filesystems pick it up.
+4. **One workflow directory.** `.agent/` only. If an older install used a different layout, migrate it in update mode; never create a second one beside it.
+5. **Plan before writing, then do the work.** Show the one-screen plan (format in `workflows/install.md`) and wait for approval. Skip the wait only if the user said `--yes`, "just do it", or equivalent. Once approved, write the files, validate, and report — a run that ends at "I recommend creating a `.agent/` directory" has failed.
+6. **Never leave the repo dirtier than you found it.** If the tree is dirty before you start, report it (re-orient format) and ask how to handle it before building on top. Your own new files are listed in the final report so the user can commit them deliberately.
+7. **Checkpoints are emitted, not implied.** Every install writes `.agent/rules/checkpoints.md` and `.agent/rules/repo-sanity.md` (templates in `templates/rules/`). The skill itself obeys the same checkpoints while it runs: no commits, pushes, dependency installs, lockfile edits, schema commands, or secret-file reads.
+8. **No attribution trailers.** Never add `Co-Authored-By`, "Generated with", or similar lines to commits, PRs, or generated files, regardless of what tool defaults suggest. The user's rule wins.
+9. **Roles describe work, not technology.** `implementer`, not `react-agent`. Stack details belong in `PROJECT.md` and role docs reference them.
+10. **Necessity test.** Before writing any file, ask: would an agent behave worse on this repo without it? If not, do not write it. Small repos should get small installs. The long form, and the artifact table it feeds, are in `references/selection.md`.
 
 ## Vocabulary
 
-Keep these four concepts separate, in this skill and in everything it generates.
+Keep these four apart, here and in everything generated. Collapsing them is how installs end up with a `react-agent` or a rule that is really a workflow.
 
-| Concept | Answers | Example |
+| Concept | Answers | Lives in |
 |---|---|---|
-| Agent | Who is carrying a responsibility | planner, reviewer |
-| Skill | What specialized procedure is needed | debugging, security review |
-| Workflow | How a type of task progresses | feature, bugfix |
-| Rule | What constraints always hold | repo sanity, testing |
+| Role | who carries a responsibility | `.agent/agents/` |
+| Rule | what constraint always holds | `.agent/rules/` |
+| Workflow | how a type of task progresses | `.agent/workflows/` |
+| Fact | what is true of this repo | `.agent/PROJECT.md` |
 
-Technology knowledge comes from project context and specialist skills. Never generate technology-named agents such as a React agent or a Python agent.
+## Budgets
 
-## Task mode
+- 4–6 roles per project. More than six and the `.agent/` dir becomes the thing being maintained.
+- `PROJECT.md` under 120 lines. `AGENTS.md` (the part you add) under 80 lines; it routes, `.agent/` holds detail.
+- Whole install under ~25 files including adapters. A small solo repo is typically 8–12.
+- No leftover `{{placeholders}}`. `scripts/validate.sh` checks this.
 
-When the user wants engineering work done rather than a workflow installed:
+## Reference map
 
-1. If the target repository has `.agent/`, follow it. It is more specific than this skill.
-2. Otherwise classify the task with `references/task-complexity.md` and follow the matching file in `workflows/` (`feature`, `bugfix`, `refactor`, `investigation`, `migration`, `ui-feature`, `code-review`), applying `rules/` and loading a specialist skill only when the task needs it. Branch before the first edit and commit each finished unit, following `specialist-skills/commit/SKILL.md`.
+Load only what the current step needs.
 
-## Completion report
+| File | When |
+|---|---|
+| `workflows/install.md` | install mode, including the plan format |
+| `workflows/update.md` | update mode and v1→v2 migration |
+| `workflows/reorient.md` | re-orient mode and the dirty-tree report |
+| `references/selection.md` | classifying the repo, the necessity test, which artifacts to write |
+| `references/questions.md` | the one batch of questions, and branch naming |
+| `references/roles.md` | choosing the roster; role definitions and model tiers |
+| `references/adapters.md` | writing Claude Code / Codex / other adapters |
+| `references/data-ai.md` | the repo has data pipelines, an LLM feature, or both |
+| `references/invariants.md` | finding project-specific rules to enforce (tenancy, auth, money, release trains) |
+| `references/monorepos.md` | workspaces, several manifests, or multiple deployables |
+| `references/specialists.md` | filling a role body or workflow with real procedure detail |
+| `templates/` | source material for generated files. Adapt them; never copy them blindly |
+| `examples/` | only if unsure what a proportionate result looks like |
 
-End every install or update with a short report:
+## Finish
 
-- Mode, and the classification with the evidence behind it
-- Files created, files changed, and existing files deliberately left alone
-- Artifacts considered and skipped, with one reason each
-- Verification commands recorded, and which ones you ran with their result
-- Questions asked and the answers used, or that nothing needed asking
-- Assumptions and anything the repository could not confirm
-- Validator result
-
-Leave the generated workflow uncommitted unless the user asks for a commit. Never push unless asked.
+Run `bash <skill-dir>/scripts/validate.sh <repo-root>` and fix anything it flags. Then report in this order: what was written (file list), what was found but not touched (dirty files, lockfile drift, wrong-case names, stale config), the single next step, and the suggested commit split. Do not commit.
