@@ -1,6 +1,6 @@
-<!-- INSTALLER: Source for .agent/rules/testing.md. Generate only when the project has tests or a stated testing expectation. Delete every INSTALLER note. -->
+<!-- INSTALLER: Source for .agent/rules/testing.md. Write only when the project has tests or a stated testing expectation; otherwise the tester role doc is enough. Delete every INSTALLER note. -->
 
-# Rule: Testing
+# Testing
 
 ## How this project tests
 
@@ -18,16 +18,19 @@
 ## Expectations
 
 - Behavior changes come with a test that fails before the change and passes after.
-- Bug fixes come with a regression test.
+- Bug fixes come with a regression test that reproduces the bug.
+- Test behavior through the public interface, not implementation detail.
 - {{WHICH_KIND_OF_TEST_FOR_WHICH_KIND_OF_CODE_IN_THIS_PROJECT}}
 - {{COVERAGE_OR_CI_GATE_IF_ANY}}
 
 ## Do not
 
-- Weaken, skip, or delete a test to make a change pass.
+- Weaken, skip, or delete a test to make a change pass. If a test is wrong, say why and fix it deliberately.
+- Add tests that assert nothing meaningful to raise coverage.
+- Mock the thing under test.
 - Introduce a new test framework, runner, or mocking approach.
 - {{PROJECT_SPECIFIC_TESTING_PROHIBITION_FOR_EXAMPLE_NO_NETWORK_IN_UNIT_TESTS}}
 
 ## Running
 
-Run the narrowest relevant tests while working, then `{{VERIFICATION_COMMANDS}}` before finishing. Report exact commands and results.
+Run the narrowest relevant tests while working, then `{{VERIFICATION_COMMANDS}}` before finishing. Report exact commands and results; anything not run is reported as not run.
