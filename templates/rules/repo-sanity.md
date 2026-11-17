@@ -1,4 +1,4 @@
-<!-- INSTALLER: Source for .agent/rules/repo-sanity.md. Written on every install: it is the rule that most changes what an agent adds to a repo. The value of this file is the project-specific "look here first" table; fill it with real locations or delete the table. Delete every INSTALLER note. -->
+<!-- INSTALLER: Source for .claude/rules/repo-sanity.md. Written on every install: it is the rule that most changes what an agent adds to a repo. The value of this file is the project-specific "look here first" table; fill it with real locations or delete the table. Delete every INSTALLER note. -->
 
 # Repo sanity
 

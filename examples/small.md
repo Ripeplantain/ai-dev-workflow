@@ -42,32 +42,29 @@ Evidence: single `pyproject.toml` with one console script; no workspace file; no
 ## The plan shown
 
 ```text
-agent-workflow v2.0.0 install plan: csvtidy
+agent-workflow v3.0.0 install plan: csvtidy
 Classified: small · cli, library
 Evidence: Python 3.11 + uv, pytest, ruff · tests: uv run pytest · CI: none
 
-Roles (4): planner [strong] · implementer [default] · tester [default] · reviewer [strong]
-Adapters: Claude Code (.claude/agents) · Codex (.codex/agents)
+Roles (4): planner [opus] · implementer [sonnet] · tester [sonnet] · reviewer [opus]
 
 Will write:
-  AGENTS.md                      create (no entry file existed)
-  CLAUDE.md                      @AGENTS.md pointer
-  .agent/PROJECT.md              stack, commands, layout, version stamp
-  .agent/rules/checkpoints.md    hard stops
-  .agent/rules/repo-sanity.md    rule registry is the thing agents break here
-  .agent/agents/*.md             × 4
-  .agent/workflows/feature.md    adding a cleaning rule
-  .agent/workflows/fix.md        the only other task type here
-  .claude/agents/*.md            × 4
-  .codex/agents/*.toml           × 4
-Total: 19 files
+  CLAUDE.md                      create (no entry file existed)
+  .claude/PROJECT.md             stack, commands, layout, version stamp
+  .claude/rules/checkpoints.md   hard stops
+  .claude/rules/repo-sanity.md   rule registry is the thing agents break here
+  .claude/agents/*.md            × 4  (subagents)
+  .claude/workflows/feature.md   adding a cleaning rule
+  .claude/workflows/fix.md       the only other task type here
+Total: 9 files
 
 Skipped: investigator (three modules, nothing to investigate) · rules/engineering.md
   (role docs carry it at this size) · rules/testing.md (pytest conventions are
   obvious from two existing test files) · rules/security.md (no auth, secrets,
   or network input) · workflows/refactor.md, migration.md, release.md (no
-  evidence of any) · .agent/skills/ (nothing recurring that roles do not cover)
+  evidence of any) · specialist procedure (nothing recurring roles do not cover)
 Enforced invariants: none found
+Leaving alone: nothing (no .claude/ existed)
 Found, not touching: nothing
 
 Approve? (yes / edit / no)
@@ -77,26 +74,23 @@ Approve? (yes / edit / no)
 
 ```text
 csvtidy/
-├── AGENTS.md                     14 lines, routes into .agent/ + delegation block
-├── CLAUDE.md                     1 line
-├── .agent/
-│   ├── PROJECT.md                34 lines
-│   ├── rules/checkpoints.md      21 lines
-│   ├── rules/repo-sanity.md      28 lines
-│   ├── agents/planner.md         …
-│   ├── agents/implementer.md
-│   ├── agents/tester.md
-│   ├── agents/reviewer.md
-│   └── workflows/{feature,fix}.md
-├── .claude/agents/*.md           4 × 6 lines
-└── .codex/agents/*.toml          4 × 8 lines
+├── CLAUDE.md                     16 lines, routes into .claude/ + delegation block
+└── .claude/
+    ├── PROJECT.md                34 lines
+    ├── rules/checkpoints.md      21 lines
+    ├── rules/repo-sanity.md      28 lines
+    ├── agents/planner.md         28 lines — frontmatter + role body, one file
+    ├── agents/implementer.md     31 lines
+    ├── agents/tester.md          26 lines
+    ├── agents/reviewer.md        24 lines
+    └── workflows/{feature,fix}.md
 ```
 
 Excerpt from the generated `PROJECT.md`:
 
 ```markdown
 ---
-version: agent-workflow 2.0.0 (2026-10-12)
+version: agent-workflow 3.0.0 (2026-11-17)
 size: small
 shape: cli, library
 roles: planner, implementer, tester, reviewer

@@ -20,18 +20,18 @@ Thanks for helping improve the skill. It is a set of Markdown instructions read 
 | Detecting a tool, framework, or layout | `scripts/scan_repo.sh`, then `references/monorepos.md` or `data-ai.md` |
 | What to ask the user, and how | `references/questions.md` |
 | The roster, tiers, or handoffs | `references/roles.md` |
-| Wiring a role into a tool | `references/adapters.md` |
+| The role-doc / subagent format | `references/subagents.md` |
 | Content of generated project files | `templates/` |
 | A reusable specialized procedure | `references/specialists.md` |
 
 ## Conventions
 
-- The project-side directory is `.agent/`. Do not introduce `.ai/` except where describing migration from it.
+- The project-side directory is `.claude/`. Do not introduce `.ai/` except where describing migration from it.
 - Template placeholders are `{{UPPER_SNAKE_CASE}}` and describe what to fill in. Guidance for the installer goes in `<!-- INSTALLER: ... -->` comments. Both must be impossible to leave behind unnoticed; the validator rejects them.
-- Templates reference generated files as `.agent/...` paths. Skill files reference each other by path relative to the skill root.
+- Templates reference generated files as `.claude/...` paths. Skill files reference each other by path relative to the skill root.
 - Keep the role, rule, workflow, and fact concepts distinct (see SKILL.md › Vocabulary).
 - Scripts stay POSIX-ish and must run under macOS's Bash 3.2: no associative arrays, no `mapfile`, no `${var,,}`.
-- Both adapter formats are documented against their vendors' current docs, with the date checked noted in `references/adapters.md`. If you change a format, re-verify it and update that date.
+- The subagent frontmatter format is documented against Claude Code's current docs, with the date checked noted in `references/subagents.md`. If you change it, re-verify against those docs and update that date.
 
 ## Checking a change
 
@@ -40,7 +40,7 @@ Thanks for helping improve the skill. It is a set of Markdown instructions read 
 /bin/bash scripts/validate.sh --links .                 # internal links
 ```
 
-Then test for real: run the skill against at least one repository of the kind your change affects, and one it should not affect, and read the resulting `.agent/` diff. Say which repositories you tried in the pull request.
+Then test for real: run the skill against at least one repository of the kind your change affects, and one it should not affect, and read the resulting `.claude/` diff. Say which repositories you tried in the pull request.
 
 ## Pull requests
 

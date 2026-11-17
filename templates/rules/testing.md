@@ -1,4 +1,4 @@
-<!-- INSTALLER: Source for .agent/rules/testing.md. Write only when the project has tests or a stated testing expectation; otherwise the tester role doc is enough. Delete every INSTALLER note. -->
+<!-- INSTALLER: Source for .claude/rules/testing.md. Write only when the project has tests or a stated testing expectation; otherwise the tester role doc is enough. Delete every INSTALLER note. -->
 
 # Testing
 

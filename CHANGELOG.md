@@ -2,6 +2,38 @@
 
 All notable changes to this skill are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [3.0.0] - 2026-11-17
+
+Claude Code only. v2's premise was one tool-neutral workflow plus a thin adapter per tool; v3 drops the neutral layer and writes directly into the shape Claude Code already reads. A role doc is now the subagent file, so the thing that could drift no longer exists.
+
+Breaking for every existing install: the workflow directory, the canonical entry file, and the role-doc format all change. Update mode migrates a v1 or v2 repo in place.
+
+### Changed
+
+- **`CLAUDE.md` is canonical.** It is what Claude Code loads on every task, so it holds the routing and the delegation block directly. v2's one-line `@AGENTS.md` pointer is gone; the validator reports a `CLAUDE.md` that is still one.
+- **The workflow directory is `.claude/`**, not `.agent/`. `PROJECT.md`, `rules/`, and `workflows/` move across unchanged.
+- **Role docs are the subagents.** One file per role at `.claude/agents/<role>.md`: frontmatter carries what Claude Code reads (`name` matching the filename stem, `description` as the dispatch trigger, `model`, `tools`, `disallowedTools`), and the body is the role's instructions. The v2 `tier`/`reads`/`writes`/`hands_off_to` frontmatter becomes contract lines in the body.
+- **Tiers resolve at write time.** `strong`/`default`/`cheap` stay the planning vocabulary in `references/roles.md`; what lands in the file is `model: opus|sonnet|haiku`.
+- `references/adapters.md` → `references/subagents.md`, documenting one format instead of three. Checked against Claude Code's current subagent docs on 2026-11-17.
+- `templates/AGENTS-section.md` → `templates/CLAUDE-md.md`: a whole entry file rather than a section to append.
+- Nested monorepo files are `apps/<x>/CLAUDE.md`.
+- Budgets drop with the file count: ~20 files for a whole install, 6–9 for a small repo, and subagent `description` fields are called out as sharing one ~15,000-token budget.
+- `scripts/scan_repo.sh` reports `workflow_dir`, `legacy_workflow_dir` (so a v1/v2 layout is found before install mode concludes nothing is installed), `claude_dir`/`claude_settings` for Claude Code's own files, `other_tool_dir` for adapters v3 no longer generates, and `claude_dir_gitignored`.
+- `scripts/validate.sh` checks subagent frontmatter instead of adapter mirroring: `name` matches the filename, a non-empty `description`, a recognised `model`, `disallowedTools` wherever `tools` is restricted, and no leftover v2 `tier:`. It also flags a `.claude/` that is gitignored, an `AGENTS.md` that still routes into the workflow dir, and subagents the skill did not write.
+
+### Added
+
+- **A written boundary inside `.claude/`** (SKILL.md › Writing inside `.claude/`). The workflow now shares a directory with Claude Code's own configuration: `settings.json`, `settings.local.json`, `skills/`, `commands/`, and `hooks/` are the user's and are never written, and pre-existing subagents are reported, not overwritten. Install and update plans carry a `Leaving alone:` line.
+- A gitignore check. If `.claude/` is ignored wholesale, the install never reaches the team, and the report says so.
+- Migration guidance for folding a v2 role doc and its adapter into one file, keeping the adapter's frontmatter and the role doc's body, with hand-edited bodies moved across verbatim (`workflows/update.md` §4).
+
+### Removed
+
+- **Codex adapters** (`.codex/agents/<role>.toml`) and the "any other tool" guidance. Existing ones are left on disk and reported as orphaned by the upgrade; they are removed only on an explicit yes.
+- **`AGENTS.md` as a generated file.** An existing one is read, folded into `CLAUDE.md`, and left alone. Reducing it to a pointer or deleting it needs its own approval, which `--yes` does not cover.
+- The adapter concept, and with it the v2 rule that an adapter must never carry an instruction its role doc does not.
+- `.claude/skills/<name>.md` as an optional output — that path belongs to installed Claude Code skills. A specialist procedure that earns its place goes in `.claude/workflows/` instead.
+
 ## [2.0.0] - 2026-10-12
 
 A rewrite around one tool-neutral workflow plus thin adapters. The skill is now named `agent-workflow`; a user who installed it as `ai-engineering-workflow` has to re-link it.
@@ -17,7 +49,7 @@ A rewrite around one tool-neutral workflow plus thin adapters. The skill is now 
 - `references/selection.md`, carrying forward v1's necessity test and complexity/topology classification as size × shape, with an artifact table per size and per-artifact conditions.
 - `references/questions.md`, carrying forward v1's batched question step and its branch-naming-per-kind-of-work rule.
 - `references/invariants.md`: finding project-specific rules worth enforcing (tenancy wrappers, auth guards, money in minor units, migration discipline, release trains, quality gates) and recording them with the file that enforces them.
-- `references/adapters.md` documents `disallowedTools` for read-only Claude Code roles, because an instruction in a rules file is not a permission boundary.
+- `references/subagents.md` documents `disallowedTools` for read-only Claude Code roles, because an instruction in a rules file is not a permission boundary.
 - Examples regenerated at three sizes: small CLI, medium app with an LLM feature, large monorepo.
 
 ### Changed

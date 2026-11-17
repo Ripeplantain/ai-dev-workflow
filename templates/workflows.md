@@ -1,6 +1,6 @@
 # Workflow templates
 
-Each becomes `.agent/workflows/<name>.md`. Only write the ones the repo needs (`references/selection.md`). Keep each under ~30 lines and use the repo's real commands, not these generic ones.
+Each becomes `.claude/workflows/<name>.md`. Only write the ones the repo needs (`references/selection.md`). Keep each under ~30 lines and use the repo's real commands, not these generic ones.
 
 Every workflow names the branch pattern for its own kind of work, taken from `PROJECT.md` › Branches and release.
 

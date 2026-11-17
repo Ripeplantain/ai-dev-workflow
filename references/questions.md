@@ -1,6 +1,6 @@
 # The question step
 
-One batch of questions, after evidence gathering and before writing anything. A wrong guess written into `.agent/` is repeated on every later task, which is why this step exists at all.
+One batch of questions, after evidence gathering and before writing anything. A wrong guess written into `.claude/` is repeated on every later task, which is why this step exists at all.
 
 ## What to ask
 
@@ -21,11 +21,11 @@ Never ask what the scan already answered. Never ask for something you could read
 - One to four questions. There is no fixed list beyond branch naming — every question comes from something this repo left open.
 - For each, say what you found, then offer concrete options with your recommendation first, so the user can answer in a word.
 - Use the agent's structured question tool if it has one; otherwise ask in one plain message and wait.
-- An answer is evidence. Write it into `.agent/` as fact and name it in the report.
+- An answer is evidence. Write it into `.claude/` as fact and name it in the report.
 
 ## Branch naming
 
-Ask on every install unless the convention is **stated**: in a contributor document, an existing agent instruction file, a branch-name hook or lint rule, or CI branch filters that fix the pattern. In update mode, ask when `.agent/` records no convention or only an unconfirmed default.
+Ask on every install unless the convention is **stated**: in a contributor document, an existing agent instruction file, a branch-name hook or lint rule, or CI branch filters that fix the pattern. In update mode, ask when `.claude/` records no convention or only an unconfirmed default.
 
 Branch names seen in `git branch -a` or in merge commit subjects are not enough to settle it, because merged branches get deleted and the few survivors rarely show the whole rule. Use them as the recommended option instead, followed by `<type>/<short-slug>` when they disagree.
 

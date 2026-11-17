@@ -2,15 +2,15 @@
 
 Pick 4–6. Names are fixed (so installs look alike across repos); which ones appear is tailored.
 
-| Role | Tier | Owns | Writes code? | Include when |
+| Role | Tier → `model` | Owns | Writes code? | Include when |
 |---|---|---|---|---|
-| planner | strong | turning a request into a plan with acceptance checks, checking it against specs/ADRs | no (plan files only) | always |
-| implementer | default | making the change, smallest defensible diff | yes | always |
-| tester | default | writing/running tests, reporting failures with evidence | test files only | the repo has, or should have, tests (almost always) |
-| reviewer | strong | correctness, security, invariants, checkpoint compliance on the diff | no | always |
-| investigator | cheap | read-only search, tracing code paths, summarising logs | no | medium/large repos, or any repo where search output would flood the main thread |
-| data-engineer | default | pipelines, data contracts, validation tiers, schema of datasets | yes (pipeline code) | `data_signals` present |
-| evaluator | strong | eval sets, golden outputs, prompt version comparisons, cost per run | eval files only | `ai_signals` present (LLM feature in the product) |
+| planner | strong → `opus` | turning a request into a plan with acceptance checks, checking it against specs/ADRs | no (plan files only) | always |
+| implementer | default → `sonnet` | making the change, smallest defensible diff | yes | always |
+| tester | default → `sonnet` | writing/running tests, reporting failures with evidence | test files only | the repo has, or should have, tests (almost always) |
+| reviewer | strong → `opus` | correctness, security, invariants, checkpoint compliance on the diff | no | always |
+| investigator | cheap → `haiku` | read-only search, tracing code paths, summarising logs | no | medium/large repos, or any repo where search output would flood the main thread |
+| data-engineer | default → `sonnet` | pipelines, data contracts, validation tiers, schema of datasets | yes (pipeline code) | `data_signals` present |
+| evaluator | strong → `opus` | eval sets, golden outputs, prompt version comparisons, cost per run | eval files only | `ai_signals` present (LLM feature in the product) |
 
 Typical rosters:
 - small web app: planner, implementer, tester, reviewer
@@ -23,7 +23,7 @@ Do not create: an architect separate from planner, a docs agent (the user's docs
 
 ## Tiers
 
-Tiers are abstract so role docs stay tool-neutral. Adapters map them to concrete models (`references/adapters.md`).
+Tier is a planning word. What lands in the role doc is a concrete `model:` field — `references/subagents.md` maps them: strong → `opus`, default → `sonnet`, cheap → `haiku`.
 
 - **strong**: reasoning-heavy, low volume. Planning and review are where a mistake costs most.
 - **default**: the main working model.

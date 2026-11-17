@@ -1,13 +1,13 @@
 # Specialist procedures
 
-Source material, not output. These are the procedures v1 shipped as seven separate `specialist-skills/`. In v2 they are **not** copied into the generated install by default, because the role docs and workflow templates already carry the procedure, and a generic copy fails the necessity test (`references/selection.md`).
+Source material, not output. These are the procedures v1 shipped as seven separate `specialist-skills/`. Since v2 they are **not** copied into the generated install by default, because the role docs and workflow templates already carry the procedure, and a generic copy fails the necessity test (`references/selection.md`).
 
 Use them two ways:
 
 1. **When filling a role body or workflow template**, draw the specific steps the repo warrants. A `fix.md` for a repo with a known-good commit history should say `git bisect`; one for a repo with three commits should not.
-2. **When writing an optional `.agent/skills/<name>.md`**, under the conditions in `references/selection.md`. Bind it to the repo's own tools and delete every step the repo gives nothing to say about.
+2. **When writing an optional `.claude/skills/<name>.md`**, under the conditions in `references/selection.md`. Bind it to the repo's own tools and delete every step the repo gives nothing to say about.
 
-Each block below ends with where its content normally lands in a v2 install.
+Each block below ends with where its content normally lands in an install.
 
 ## Debugging
 
@@ -31,7 +31,7 @@ Learn the engine, migration tool, naming, and how schema changes reach each envi
 
 Read three comparable operations before designing: naming, resource structure, request/response shapes, error format, status codes, pagination, auth, versioning, and where the contract is defined. Identify the consumers and whether they can all be changed and deployed together — if not, compatibility rules apply. Design from the consumer's side, in the project's existing vocabulary. Stay consistent with existing conventions even where you would choose differently; a second convention costs more than an imperfect first one. Define every failure mode in the project's error shape. Adding optional things is usually safe; removing, renaming, retyping, tightening validation, or changing defaults breaks consumers. Cover authorization per operation, idempotency for retried writes, and limits on list sizes and payloads. Update the contract artifacts the project keeps.
 
-→ the only specialist with no default home. This is the realistic candidate for `.agent/skills/api-design.md` on a repo whose API other teams consume.
+→ the only specialist with no default home. This is the realistic candidate for `.claude/skills/api-design.md` on a repo whose API other teams consume.
 
 ## Refactoring
 

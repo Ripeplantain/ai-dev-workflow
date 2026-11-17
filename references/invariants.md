@@ -2,7 +2,7 @@
 
 An invariant is a rule that, if broken, causes a security, data, or money bug that tests may not catch. The workflow should name the ones a repo already has and make the reviewer check them on every diff.
 
-Only record an invariant you can point to in the repo: an existing rule in AGENTS.md or docs, a helper that every caller uses, or a test or CI job that enforces it. Quote its location in `PROJECT.md`. Do not invent invariants.
+Only record an invariant you can point to in the repo: an existing rule in CLAUDE.md or docs, a helper that every caller uses, or a test or CI job that enforces it. Quote its location in `PROJECT.md`. Do not invent invariants.
 
 ## What to look for
 
@@ -18,6 +18,6 @@ Only record an invariant you can point to in the repo: an existing rule in AGENT
 
 ## Where they go
 
-- A short "Invariants" section in `.agent/PROJECT.md`: one line each, with the file or test that enforces it.
+- A short "Invariants" section in `.claude/PROJECT.md`: one line each, with the file or test that enforces it.
 - The reviewer role doc's checklist references that section.
 - If there is a cheap automatic check (a grep, an existing test), the tester role runs it.
