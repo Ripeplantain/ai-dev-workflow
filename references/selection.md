@@ -44,30 +44,28 @@ Starting points, not quotas. Remove anything that fails the necessity test; add 
 
 | Artifact | small | medium | large |
 |---|---|---|---|
-| `AGENTS.md` (root, create or merge) | yes | yes | yes |
-| `CLAUDE.md` (`@AGENTS.md`) | yes | yes | yes |
-| `.agent/PROJECT.md` | yes | yes | yes |
-| `.agent/rules/checkpoints.md` | yes | yes | yes |
-| `.agent/rules/repo-sanity.md` | yes | yes | yes |
-| `.agent/rules/engineering.md` | no (role docs carry it) | yes | yes |
-| `.agent/rules/testing.md` | only if tests exist | if tests exist | yes |
-| `.agent/rules/security.md` | no | conditional | conditional |
-| `.agent/rules/design-system.md` | no | if UI code | if UI code |
-| `.agent/rules/architecture.md` | no | no | only as overflow from `engineering.md` |
-| `.agent/rules/data-contract.md` | if `data_signals` | if `data_signals` | if `data_signals` |
-| `.agent/rules/evals.md` | if `ai_signals` | if `ai_signals` | if `ai_signals` |
-| `.agent/agents/*.md` | planner, implementer, tester, reviewer | same | add investigator |
-| `.agent/workflows/feature.md`, `fix.md` | yes | yes | yes |
-| `.agent/workflows/refactor.md` | no | conditional | conditional |
-| `.agent/workflows/migration.md` | no | if migrations exist | if migrations exist |
-| `.agent/workflows/release.md` | no | if a release train exists | if a release train exists |
-| `.agent/workflows/data-change.md`, `prompt-change.md` | per `references/data-ai.md` | same | same |
-| nested `apps/*/AGENTS.md` | no | no | only where commands differ |
-| adapters, one per role **per tool the repo shows** | yes | yes | yes |
+| `CLAUDE.md` (root, create or merge) | yes | yes | yes |
+| `.claude/PROJECT.md` | yes | yes | yes |
+| `.claude/rules/checkpoints.md` | yes | yes | yes |
+| `.claude/rules/repo-sanity.md` | yes | yes | yes |
+| `.claude/rules/engineering.md` | no (role docs carry it) | yes | yes |
+| `.claude/rules/testing.md` | only if tests exist | if tests exist | yes |
+| `.claude/rules/security.md` | no | conditional | conditional |
+| `.claude/rules/design-system.md` | no | if UI code | if UI code |
+| `.claude/rules/architecture.md` | no | no | only as overflow from `engineering.md` |
+| `.claude/rules/data-contract.md` | if `data_signals` | if `data_signals` | if `data_signals` |
+| `.claude/rules/evals.md` | if `ai_signals` | if `ai_signals` | if `ai_signals` |
+| `.claude/agents/*.md` (the subagents) | planner, implementer, tester, reviewer | same | add investigator |
+| `.claude/workflows/feature.md`, `fix.md` | yes | yes | yes |
+| `.claude/workflows/refactor.md` | no | conditional | conditional |
+| `.claude/workflows/migration.md` | no | if migrations exist | if migrations exist |
+| `.claude/workflows/release.md` | no | if a release train exists | if a release train exists |
+| `.claude/workflows/data-change.md`, `prompt-change.md` | per `references/data-ai.md` | same | same |
+| nested `apps/*/CLAUDE.md` | no | no | only where commands differ |
 
-A small repo lands at 8–12 files including adapters. If a small repo is heading past that, something is failing the necessity test.
+A small repo lands at 6–9 files. If a small repo is heading past that, something is failing the necessity test.
 
-Adapters are generated only for tools this repo gives evidence of — `.claude/` or `CLAUDE.md` for Claude Code, `.codex/` for Codex. One tool means one adapter per role, not two. See `workflows/install.md` §5.
+Roles are not a separate artifact from their subagent files: `.claude/agents/<role>.md` is both. Nothing in the install mirrors anything else, so the file count is the role count. See `references/subagents.md`.
 
 ### Conditions for individual artifacts
 
@@ -85,11 +83,13 @@ Adapters are generated only for tools this repo gives evidence of — `.claude/`
 | data-engineer role | `data_signals`. On a pure pipeline repo it replaces implementer rather than joining it |
 | evaluator role | `ai_signals` — an LLM feature in the product, not just an LLM-authored commit history |
 
-## Optional `.agent/skills/`
+## Optional specialist procedures
 
 Default: do not write one. The roles, rules, and workflows already carry the procedure, and a generic procedure file fails the necessity test.
 
-Write `.agent/skills/<name>.md` only when all three hold: the repo has a recurring specialist task, no installed role doc covers it, and the procedure is specific to this repo. The realistic case is `api-design.md` on a repo whose public API other teams consume. Draw the content from `references/specialists.md` and bind it to the repo's own tools and conventions.
+Write one only when all three hold: the repo has a recurring specialist task, no installed role doc covers it, and the procedure is specific to this repo. The realistic case is API design on a repo whose public API other teams consume. Draw the content from `references/specialists.md` and bind it to the repo's own tools and conventions.
+
+It goes in `.claude/workflows/<name>.md`, not `.claude/skills/`. That directory holds installed Claude Code skills, each a directory with its own `SKILL.md`, and it belongs to the user (SKILL.md › Writing inside `.claude/`). If the procedure really wants to be a skill the user can invoke by name, say so in the report and let them decide — do not install one unasked.
 
 ## Size budget
 

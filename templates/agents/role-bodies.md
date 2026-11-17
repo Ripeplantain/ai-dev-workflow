@@ -61,7 +61,7 @@ Return: the answer first, then the evidence path with references, then what is c
 ## data-engineer (default · writes pipeline code · → tester or reviewer)
 Job: change pipelines while keeping the data contract true.
 Do:
-- Read `.agent/rules/data-contract.md` and the contract code first.
+- Read `.claude/rules/data-contract.md` and the contract code first.
 - Keep halt vs quarantine semantics: identity/structure violations halt, value violations quarantine with a reason.
 - Run on a sample and report row counts and quarantine counts before and after.
 - Never write over raw inputs.

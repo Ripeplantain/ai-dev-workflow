@@ -1,6 +1,6 @@
 # Example: large monorepo
 
-Shows the investigator role, nested `AGENTS.md`, a release train, and where the workspace model goes. The repo is hypothetical.
+Shows the investigator role, a nested `CLAUDE.md`, a release train, and where the workspace model goes. The repo is hypothetical.
 
 ## The repo
 
@@ -42,12 +42,12 @@ ci: github-actions(ci.yml release.yml)
 quality_gate: sonar
 ai_signals: none
 data_signals: none
-agent_files: AGENTS.md          agent_dir: none
+agent_files: AGENTS.md          workflow_dir: none
 invariant_hints: withTenantContext(31) requireAdmin(9) tenant_id(44)
 specs: docs/adr
 ```
 
-An `AGENTS.md` already exists (41 lines of conventions someone wrote by hand). It is merged into, never overwritten.
+An `AGENTS.md` already exists (41 lines of conventions someone wrote by hand). Its content is folded into `CLAUDE.md`; the file itself is left alone unless the user says otherwise.
 
 ## Classification
 
@@ -59,35 +59,31 @@ Read `references/monorepos.md` at this point, before planning.
 ## The plan shown
 
 ```text
-agent-workflow v2.0.0 install plan: atlas
+agent-workflow v3.0.0 install plan: atlas
 Classified: large · monorepo, multi-service, multi-language, web-app, api, library
 Evidence: pnpm+turbo, Next/Vite/Go, Drizzle, vitest+playwright · tests: pnpm turbo test · CI: github-actions (affected) + sonar
 
-Roles (5): planner [strong] · investigator [cheap] · implementer [default] · tester [default] · reviewer [strong]
-Adapters: Claude Code (.claude/agents) · Codex (.codex/agents)
+Roles (5): planner [opus] · investigator [haiku] · implementer [sonnet] · tester [sonnet] · reviewer [opus]
 
 Will write:
-  AGENTS.md                       merge into existing (41 lines kept)
-  CLAUDE.md                       @AGENTS.md pointer
-  .agent/PROJECT.md               stack, filtered commands, workspace model, invariants
-  .agent/rules/checkpoints.md     incl. db:migrate, release tags, deploy, sonar gate
-  .agent/rules/repo-sanity.md     shared-vs-app duplication is the live risk here
-  .agent/rules/engineering.md     dependency direction + L0-L4 + release branches
-  .agent/rules/architecture.md    overflow: workspace graph too long for engineering.md
-  .agent/rules/testing.md         unit vs integration vs playwright, per workspace
-  .agent/rules/security.md        tenancy, admin guards, service tokens
-  .agent/rules/design-system.md   packages/ui is a real token layer
-  .agent/agents/*.md              × 5
-  .agent/workflows/feature.md
-  .agent/workflows/fix.md
-  .agent/workflows/migration.md   packages/db owns schema
-  .agent/workflows/release.md     release/* + hot-fix/* train is real
-  services/ingest/AGENTS.md       Go + Makefile, differs from every JS workspace
-  .claude/agents/*.md             × 5
-  .codex/agents/*.toml            × 5
-Total: 25 files
+  CLAUDE.md                       create (folds in AGENTS.md's 41 lines)
+  .claude/PROJECT.md              stack, filtered commands, workspace model, invariants
+  .claude/rules/checkpoints.md    incl. db:migrate, release tags, deploy, sonar gate
+  .claude/rules/repo-sanity.md    shared-vs-app duplication is the live risk here
+  .claude/rules/engineering.md    dependency direction + L0-L4 + release branches
+  .claude/rules/architecture.md   overflow: workspace graph too long for engineering.md
+  .claude/rules/testing.md        unit vs integration vs playwright, per workspace
+  .claude/rules/security.md       tenancy, admin guards, service tokens
+  .claude/rules/design-system.md  packages/ui is a real token layer
+  .claude/agents/*.md             × 5  (subagents)
+  .claude/workflows/feature.md
+  .claude/workflows/fix.md
+  .claude/workflows/migration.md  packages/db owns schema
+  .claude/workflows/release.md    release/* + hot-fix/* train is real
+  services/ingest/CLAUDE.md       Go + Makefile, differs from every JS workspace
+Total: 16 files
 
-Skipped: apps/web/AGENTS.md, apps/admin/AGENTS.md, packages/*/AGENTS.md (same
+Skipped: apps/web/CLAUDE.md, apps/admin/CLAUDE.md, packages/*/CLAUDE.md (same
   toolchain and commands as root — a near-identical file per workspace is the
   thing references/monorepos.md says not to generate) · workflows/refactor.md
   (ADRs show structural change goes through a decision record, not a routine
@@ -98,14 +94,16 @@ Enforced invariants:
   - Schema changes originate in packages/db and go through drizzle-kit generate
   - Feature work branches from develop; hot-fix/* branches from the release branch
   - New code meets the Sonar gate (sonar-project.properties)
-Found, not touching: existing AGENTS.md (41 lines, merged under it)
+Leaving alone: AGENTS.md (41 lines, folded into CLAUDE.md; offered to reduce it
+  to a pointer — user declined, other tools in the team read it)
+Found, not touching: nothing
 
 Approve? (yes / edit / no)
 ```
 
 ## Excerpts from the result
 
-`.agent/PROJECT.md` › Commands — note the filtered forms come first, because running everything here takes 11 minutes:
+`.claude/PROJECT.md` › Commands — note the filtered forms come first, because running everything here takes 11 minutes:
 
 ```markdown
 | Purpose | Command | Notes |
@@ -120,14 +118,14 @@ Approve? (yes / edit / no)
 | db | `pnpm db:generate`, `pnpm db:migrate` | checkpoint: schema |
 ```
 
-`.agent/PROJECT.md` › Layout — the workspace model lives here, one line per unit:
+`.claude/PROJECT.md` › Layout — the workspace model lives here, one line per unit:
 
 ```markdown
 | Path | Kind | Purpose |
 |---|---|---|
 | apps/web | deployable | Next.js customer app |
 | apps/admin | deployable | Vite internal SPA |
-| services/ingest | deployable | Go ingest service — see services/ingest/AGENTS.md |
+| services/ingest | deployable | Go ingest service — see services/ingest/CLAUDE.md |
 | packages/db | library | Drizzle schema + migrations. Source of truth for schema |
 | packages/ui | library | Shared components and CSS custom properties |
 | packages/types | library | Generated API clients. Generated — do not hand-edit |
@@ -137,12 +135,12 @@ imports nothing from packages/ui. A change in packages/* requires building and
 testing every consumer: `pnpm turbo test --filter='...@atlas/db'`.
 ```
 
-`services/ingest/AGENTS.md`, the only nested file, kept to the difference:
+`services/ingest/CLAUDE.md`, the only nested file, kept to the difference:
 
 ```markdown
 # services/ingest
 
-Go service. The root AGENTS.md and `.agent/` apply, except:
+Go service. The root CLAUDE.md and `.claude/` apply, except:
 
 - Commands are `make build`, `make test`, `make run` — not pnpm/turbo.
 - Tests are Go table tests next to the source, not vitest.

@@ -8,7 +8,7 @@ The point is to turn rigor the user already practises by hand into generated art
 
 ### Data contract (`templates/rules/data-contract.md`)
 
-Write `.agent/rules/data-contract.md` describing, from evidence:
+Write `.claude/rules/data-contract.md` describing, from evidence:
 - each input source, its expected columns/types, and allowed ranges
 - **identity rules**: values that must be known for a row to be trusted (for example a plot prefix that maps to a treatment)
 - the two validation tiers:
@@ -28,13 +28,13 @@ Add to `checkpoints.md` for data repos:
 
 ### Workflow
 
-`.agent/workflows/data-change.md`: change contract → update validation → run on a sample → compare row counts and quarantine counts before/after → reviewer checks the diff of counts, not just the code.
+`.claude/workflows/data-change.md`: change contract → update validation → run on a sample → compare row counts and quarantine counts before/after → reviewer checks the diff of counts, not just the code.
 
 ## LLM features
 
 ### Evals (`templates/rules/evals.md`)
 
-Write `.agent/rules/evals.md` and propose an `evals/` directory (location by repo convention, e.g. `packages/ai/evals/`):
+Write `.claude/rules/evals.md` and propose an `evals/` directory (location by repo convention, e.g. `packages/ai/evals/`):
 - `cases.jsonl`: input, expected properties (not exact strings), tags. Start with 10–20 real cases drawn from the spec, the existing tests, or the user's examples.
 - a runner using the project's existing test runner (Vitest, pytest), so evals run with a script the repo already has.
 - graders, cheapest first: deterministic checks (schema parses, required fields, refusal when it should refuse) → string/regex → LLM-as-judge only for what nothing cheaper can check.
@@ -54,4 +54,4 @@ Rule: prompts live in files or exported constants with a version identifier (`PR
 
 ### Workflow
 
-`.agent/workflows/prompt-change.md`: bump version → run evals on old and new → evaluator compares pass rate, failures, and cost → reviewer approves → checkpoint.
+`.claude/workflows/prompt-change.md`: bump version → run evals on old and new → evaluator compares pass rate, failures, and cost → reviewer approves → checkpoint.

@@ -27,7 +27,7 @@ Taken from {{source file}}. Run nothing not listed here without asking.
 | db | {{cmds}} | checkpoint: schema |
 
 ## Layout
-{{5–15 lines: top-level dirs and what lives there; for monorepos, each app/package and its nested AGENTS.md if any}}
+{{5–15 lines: top-level dirs and what lives there; for monorepos, each app/package and its nested CLAUDE.md if any}}
 
 ## Invariants
 {{one line each with the file/test that enforces it; or "None recorded."}}

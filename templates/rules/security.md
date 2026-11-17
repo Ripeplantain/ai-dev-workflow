@@ -1,4 +1,4 @@
-<!-- INSTALLER: Source for .agent/rules/security.md. Write only when the project handles auth, secrets, user data, payments, network input, or infrastructure. Document WHERE sensitive things live, never their values, and never an internal hostname the repo does not already contain. Delete every INSTALLER note. -->
+<!-- INSTALLER: Source for .claude/rules/security.md. Write only when the project handles auth, secrets, user data, payments, network input, or infrastructure. Document WHERE sensitive things live, never their values, and never an internal hostname the repo does not already contain. Delete every INSTALLER note. -->
 
 # Security
 

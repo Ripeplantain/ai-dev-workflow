@@ -114,11 +114,27 @@ datadirs=$(ffind 2 "-type d \( -name data -o -name raw -o -name dags -o -name pi
 # --- existing agent files ---
 agentfiles=$(ffind 4 "-iname agents.md -o -iname claude.md -o -iname gemini.md -o -name .cursorrules -o -name copilot-instructions.md" | join_lines)
 echo "agent_files: ${agentfiles:-none}"
-[ -d .agent ] && echo "agent_dir: .agent ($(find .agent -type f | wc -l | tr -d ' ') files; version: $(grep -m1 -Eo 'agent-workflow [0-9][0-9.]*' .agent/PROJECT.md 2>/dev/null | awk '{print $2}' || true))" || echo "agent_dir: none"
-for d in .claude/agents .codex/agents .cursor/rules; do [ -d "$d" ] && echo "adapter_dir: $d ($(ls "$d" | wc -l | tr -d ' '))"; done
-[ -d .claude ] && echo "tool_seen: claude-code"
-[ -d .codex ] && echo "tool_seen: codex"
-has CLAUDE.md && echo "claude_md_is_pointer: $(grep -v '^[[:space:]]*$' CLAUDE.md | head -1 | grep -q '^@AGENTS.md' && echo yes || echo no)"
+# The workflow dir, and any pre-v3 or legacy layout it may have to be migrated from.
+if [ -d .claude ]; then
+  echo "workflow_dir: .claude ($(find .claude -type f | wc -l | tr -d ' ') files; version: $(grep -m1 -Eo 'agent-workflow [0-9][0-9.]*' .claude/PROJECT.md 2>/dev/null | awk '{print $2}' || true))"
+else
+  echo "workflow_dir: none"
+fi
+for d in .agent .agents .ai docs/ai; do
+  [ -d "$d" ] || continue
+  echo "legacy_workflow_dir: $d ($(find "$d" -type f -name '*.md' -not -path '*/skills/*' | wc -l | tr -d ' ') md files; version: $(grep -m1 -Eo 'agent-workflow [0-9][0-9.]*' "$d/PROJECT.md" 2>/dev/null | awk '{print $2}' || true))"
+done
+# Claude Code's own territory under .claude/ — read for context, never written.
+for d in .claude/agents .claude/skills .claude/commands .claude/hooks; do
+  [ -d "$d" ] && echo "claude_dir: $d ($(ls "$d" | wc -l | tr -d ' ') entries)"
+done
+for f in .claude/settings.json .claude/settings.local.json; do
+  [ -f "$f" ] && echo "claude_settings: $f"
+done
+# Other tools' adapters are no longer generated; report them so they can be flagged as orphans.
+for d in .codex/agents .cursor/rules; do [ -d "$d" ] && echo "other_tool_dir: $d ($(ls "$d" | wc -l | tr -d ' '))"; done
+has CLAUDE.md && echo "claude_md_is_v2_pointer: $(grep -v '^[[:space:]]*$' CLAUDE.md | head -1 | grep -q '^@AGENTS.md' && echo yes || echo no)"
+grep -Eq "^[[:space:]]*/?\.claude/?[[:space:]]*$" .gitignore 2>/dev/null && echo "claude_dir_gitignored: yes"
 
 # --- specs & docs ---
 echo "specs: $(ffind 3 "-path './docs' -o -path '*/adr' -o -path '*/adrs' -o -name 'PROMPT*.md' -o -name 'SPEC*.md' -o -path './prompts'" | join_lines)"

@@ -1,4 +1,4 @@
-<!-- INSTALLER: Source for .agent/rules/design-system.md. Write only when the project has UI code.
+<!-- INSTALLER: Source for .claude/rules/design-system.md. Write only when the project has UI code.
 
 Find the token source of truth before filling this in. Tokens take many forms: CSS custom properties (`:root { --color-… }`, `[data-theme]` blocks), a Tailwind theme (`tailwind.config.*` or `@theme` in CSS), JS/TS theme objects (`theme.ts`, styled-components or Emotion providers, vanilla-extract contracts), Sass variables (`_variables.scss`), component-library themes (MUI `createTheme`, Chakra `extendTheme`, shadcn `components.json` plus CSS variables), Flutter `ThemeData`, Android `res/values/*.xml`, or a dedicated tokens package. A project may layer several — a tokens package feeding a Tailwind theme — so identify which is the source and which is derived, and send agents to the source.
 

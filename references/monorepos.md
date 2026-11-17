@@ -16,7 +16,7 @@ Load when the scan reports `workspaces`, several manifests, or multiple deployab
 
 ## What goes where
 
-Put the workspace model in `.agent/PROJECT.md` › Layout, not in a separate context file. One line per unit: path, kind, purpose. Then, in the same section:
+Put the workspace model in `.claude/PROJECT.md` › Layout, not in a separate context file. One line per unit: path, kind, purpose. Then, in the same section:
 
 - The allowed dependency direction, and anything that must never depend on something else.
 - Where shared code belongs, so an agent extends the shared package instead of copying into an app.
@@ -24,11 +24,11 @@ Put the workspace model in `.agent/PROJECT.md` › Layout, not in a separate con
 - What a change to a shared package requires: which consumers to build and test.
 - Any workspace with a different language, toolchain, or deploy path.
 
-If that pushes `PROJECT.md` past 120 lines, the overflow goes to `.agent/rules/architecture.md`, not to a new context file.
+If that pushes `PROJECT.md` past 120 lines, the overflow goes to `.claude/rules/architecture.md`, not to a new context file.
 
-## Nested AGENTS.md
+## Nested CLAUDE.md
 
-Default to one root `AGENTS.md` and one `.agent/`. Add `apps/<x>/AGENTS.md` only where a unit has commands or rules that genuinely differ — a different language or toolchain, a different testing approach, or constraints that apply to that unit alone. Nested files take precedence locally, so keep each one to the difference and point back to the root for everything else. Never generate a near-identical file per workspace.
+Default to one root `CLAUDE.md` and one `.claude/`. Add `apps/<x>/CLAUDE.md` only where a unit has commands or rules that genuinely differ — a different language or toolchain, a different testing approach, or constraints that apply to that unit alone. Nested files take precedence locally, so keep each one to the difference and point back to the root for everything else. Never generate a near-identical file per workspace.
 
 ## Carry into the generated workflows
 

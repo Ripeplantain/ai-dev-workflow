@@ -1,8 +1,8 @@
-<!-- INSTALLER: Source for .agent/rules/engineering.md. Write for medium and large repos; on a small repo the role docs carry this and the file is skipped. Carries the project's architecture, task sizing, and Git conventions. On a large repo the architecture section may move to its own .agent/rules/architecture.md, leaving a pointer here. Replace every generic line with this project's specific version. Delete every INSTALLER note. -->
+<!-- INSTALLER: Source for .claude/rules/engineering.md. Write for medium and large repos; on a small repo the role docs carry this and the file is skipped. Carries the project's architecture, task sizing, and Git conventions. On a large repo the architecture section may move to its own .claude/rules/architecture.md, leaving a pointer here. Replace every generic line with this project's specific version. Delete every INSTALLER note. -->
 
 # Engineering
 
-Applies to every change. Project facts and commands are in `.agent/PROJECT.md`. Hard stops are in `.agent/rules/checkpoints.md`.
+Applies to every change. Project facts and commands are in `.claude/PROJECT.md`. Hard stops are in `.claude/rules/checkpoints.md`.
 
 ## Understand before changing
 
@@ -56,7 +56,7 @@ Formatting and lint rules are enforced by {{FORMATTER_AND_LINTER}}; run them, do
 - Commit each unit as soon as it is coherent and its tests pass, rather than saving commits for the end. One unit per commit: something a reader can review and revert on its own.
 - Stage by path. Never `git add -A`, `git add .`, or `git commit -a`.
 - Messages: {{COMMIT_MESSAGE_CONVENTION}}
-- Commit, push, PR, and merge are checkpoints — see `.agent/rules/checkpoints.md`.
+- Commit, push, PR, and merge are checkpoints — see `.claude/rules/checkpoints.md`.
 
 <!-- INSTALLER: Use the project's own branch and message conventions where the repository states them or the user gave them; otherwise the defaults are <type>/<short-slug> branches and "type(scope): lowercase claim, no period" messages. If branch patterns differ by kind of work, replace the branch bullet with a sub-list, one line per kind (feature, bug fix, and any others the project names), each with its pattern, an example, and its base branch if it is not the default. -->
 

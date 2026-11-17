@@ -58,31 +58,27 @@ Two, batched:
 ## The plan shown
 
 ```text
-agent-workflow v2.0.0 install plan: clauseline
+agent-workflow v3.0.0 install plan: clauseline
 Classified: medium · web-app, api, llm-feature
 Evidence: Next 15 + Drizzle + AI SDK (Anthropic), pnpm · tests: pnpm test · CI: github-actions
 
-Roles (5): planner [strong] · implementer [default] · tester [default] · reviewer [strong] · evaluator [strong]
-Adapters: Claude Code (.claude/agents) · Codex (.codex/agents)
+Roles (5): planner [opus] · implementer [sonnet] · tester [sonnet] · reviewer [opus] · evaluator [opus]
 
 Will write:
-  AGENTS.md                      create
-  CLAUDE.md                      @AGENTS.md pointer
-  .agent/PROJECT.md              stack, commands, layout, invariants, version stamp
-  .agent/rules/checkpoints.md    incl. db:migrate/push/studio + 30 paid calls
-  .agent/rules/repo-sanity.md    what not to add
-  .agent/rules/engineering.md    layering + L0-L4 + branch conventions
-  .agent/rules/testing.md        vitest conventions, what needs which test
-  .agent/rules/security.md       auth, tenancy, secrets live in named files
-  .agent/rules/evals.md          eval cases, graders, prompt versioning
-  .agent/agents/*.md             × 5
-  .agent/workflows/feature.md
-  .agent/workflows/fix.md
-  .agent/workflows/migration.md  drizzle migrations exist
-  .agent/workflows/prompt-change.md
-  .claude/agents/*.md            × 5
-  .codex/agents/*.toml           × 5
-Total: 24 files
+  CLAUDE.md                      create
+  .claude/PROJECT.md             stack, commands, layout, invariants, version stamp
+  .claude/rules/checkpoints.md   incl. db:migrate/push/studio + 30 paid calls
+  .claude/rules/repo-sanity.md   what not to add
+  .claude/rules/engineering.md   layering + L0-L4 + branch conventions
+  .claude/rules/testing.md       vitest conventions, what needs which test
+  .claude/rules/security.md      auth, tenancy, secrets live in named files
+  .claude/rules/evals.md         eval cases, graders, prompt versioning
+  .claude/agents/*.md            × 5  (subagents)
+  .claude/workflows/feature.md
+  .claude/workflows/fix.md
+  .claude/workflows/migration.md drizzle migrations exist
+  .claude/workflows/prompt-change.md
+Total: 14 files
 
 Skipped: investigator (one app, navigable) · rules/design-system.md (Tailwind
   with no token layer or shared component dir yet — noted in PROJECT.md instead)
@@ -93,6 +89,7 @@ Enforced invariants:
   - Tenant rows are only queried through the tenant-scoped helpers (src/db/queries/*)
   - Admin route handlers call requireAdmin first (src/lib/auth.ts, 4 call sites)
   - Schema changes go through drizzle-kit generate; migrate/push are checkpoints
+Leaving alone: .claude/settings.json (6 permission rules, pre-existing)
 Found, not touching: .env.local present and gitignored (not read)
 
 Approve? (yes / edit / no)
@@ -100,7 +97,7 @@ Approve? (yes / edit / no)
 
 ## Excerpts from the result
 
-`.agent/rules/evals.md`:
+`.claude/rules/evals.md`:
 
 ```markdown
 # Evals
@@ -128,7 +125,7 @@ Paid eval runs above 30 calls are a checkpoint.
 
 The `evals/` directory itself is **proposed, not created** — it holds real cases drawn from the spec, and the plan says so. Writing an empty `cases.jsonl` would be a placeholder pretending to be an artifact.
 
-The two adapter shapes, side by side. `evaluator` writes eval files, so it inherits tools:
+Two role docs, side by side. `evaluator` writes eval files, so it omits `tools` and inherits everything:
 
 ```markdown
 ---
@@ -136,24 +133,40 @@ name: evaluator
 description: Measures LLM behaviour on eval cases and compares prompt or model changes. Use when a prompt, model, or provider changes, before review.
 model: opus
 ---
-Read `.agent/agents/evaluator.md` and `.agent/rules/checkpoints.md` before doing
-anything, and follow them. They are the source of truth; this file only wires the
-role into Claude Code.
+
+# Evaluator
+
+**Job:** Say whether a prompt, model, or provider change made the product better or worse.
+
+Reads: `.claude/PROJECT.md`, `.claude/rules/checkpoints.md`, `.claude/rules/evals.md`
+Writes: eval files under `evals/`
+Hands off to: reviewer
+
+## Before starting
+Read the files in `Reads` above. Paid runs above 30 calls are a checkpoint: report
+the estimate and stop.
+...
 ```
 
-`reviewer` is read-only, so the adapter enforces it rather than trusting the role doc:
+`reviewer` is read-only, and the frontmatter enforces it rather than trusting the body:
 
 ```markdown
 ---
 name: reviewer
 description: Reviews a diff for correctness, security, project invariants, and checkpoint compliance. Use after implementation and before asking the user to commit.
+model: opus
 tools: Read, Grep, Glob, Bash
 disallowedTools: Edit, Write, NotebookEdit
-model: opus
 ---
-Read `.agent/agents/reviewer.md` and `.agent/rules/checkpoints.md` before doing
-anything, and follow them. They are the source of truth; this file only wires the
-role into Claude Code.
+
+# Reviewer
+
+**Job:** Find what is wrong with a diff before the user is asked to commit it.
+
+Reads: `.claude/PROJECT.md`, `.claude/rules/checkpoints.md`, `.claude/rules/security.md`
+Writes: nothing
+Hands off to: main agent
+...
 ```
 
-The rule is in `references/adapters.md`: whether a role writes is decided once, in its role doc's `writes:` field, and the adapter mirrors it. An adapter that contradicts its role doc is the bug the validator cannot catch for you.
+`Writes: nothing` in the body and `disallowedTools` in the frontmatter say the same thing, but only one of them is enforced. The body is an instruction; the field is a permission boundary. That is why `references/subagents.md` requires both on a read-only role.

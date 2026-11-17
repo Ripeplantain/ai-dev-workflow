@@ -14,8 +14,8 @@ The user's most common real problem is work built and left uncommitted in the tr
    - `git branch -vv` (local branches, upstream, ahead/behind)
    - `git diff --stat` and `git diff --stat --cached`
 3. Group the dirty files by area (top-level dir or package) and, for each group, read just enough of the diff to say in one line what the work is. Untracked files: list them and guess whether each is real work, a build artifact, or a stray file.
-4. Can it build? Read the commands from `.agent/PROJECT.md` or `package.json` / `Makefile`. Do **not** run install, build, migrations, or anything that writes. You may run read-only checks the project defines, such as a typecheck or lint with no `--fix`, when they need no network and no install. If `node_modules` / venv is missing, say so rather than installing.
-5. If `.agent/` exists, check its `version:` stamp against this skill's version and note whether update mode is due.
+4. Can it build? Read the commands from `.claude/PROJECT.md` or `package.json` / `Makefile`. Do **not** run install, build, migrations, or anything that writes. You may run read-only checks the project defines, such as a typecheck or lint with no `--fix`, when they need no network and no install. If `node_modules` / venv is missing, say so rather than installing.
+5. If `.claude/` exists, check its `version:` stamp against this skill's version and note whether update mode is due.
 
 ## Report
 
