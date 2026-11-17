@@ -77,7 +77,13 @@ Found, not touching: <dirty files / lockfile drift / wrong-case names / stale co
 Approve? (yes / edit / no)
 ```
 
-Which tools get adapters: Claude Code if `.claude/` or `CLAUDE.md` exists or the user uses it; Codex if `.codex/` exists or the user uses it. When nothing indicates either, generate both. Both are cheap and the user switches between them.
+Which tools get adapters is decided by repo evidence, like everything else:
+
+- Claude Code → only if `.claude/` or `CLAUDE.md` exists.
+- Codex → only if `.codex/` exists.
+- Neither present → ask, in the step 4 batch. Do not guess, and do not generate both as a hedge.
+
+What the user has installed on their machine is not evidence about this repo. A globally installed Codex does not mean this repo wants `.codex/agents/`, and generating unused adapters is exactly the kind of file the necessity test exists to stop: two per role, carrying no behaviour, for a tool this repo shows no sign of.
 
 On approval, do the work. A plan the user approved and then got back as "I recommend creating a `.agent/` directory" is a failed run.
 

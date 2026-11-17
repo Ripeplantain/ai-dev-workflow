@@ -63,9 +63,11 @@ Starting points, not quotas. Remove anything that fails the necessity test; add 
 | `.agent/workflows/release.md` | no | if a release train exists | if a release train exists |
 | `.agent/workflows/data-change.md`, `prompt-change.md` | per `references/data-ai.md` | same | same |
 | nested `apps/*/AGENTS.md` | no | no | only where commands differ |
-| adapters (`.claude/agents/`, `.codex/agents/`) | yes | yes | yes |
+| adapters, one per role **per tool the repo shows** | yes | yes | yes |
 
 A small repo lands at 8–12 files including adapters. If a small repo is heading past that, something is failing the necessity test.
+
+Adapters are generated only for tools this repo gives evidence of — `.claude/` or `CLAUDE.md` for Claude Code, `.codex/` for Codex. One tool means one adapter per role, not two. See `workflows/install.md` §5.
 
 ### Conditions for individual artifacts
 
